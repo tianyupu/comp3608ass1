@@ -3,6 +3,7 @@ depth = 3 # how many moves ahead to look
 won = 10000
 lost = -10000
 size = 8 # size of board
+const = 3 # number for heuristic that you multiply the importance of quantity of coins by
 
 # Functions
 def move(token1, token2):
@@ -75,17 +76,111 @@ def valid_moves(board, colour):
   return moves
 
 def valid_row(newToken, oldToken, board):
-  # TO DO
   valid = False
+  found = False
+  token = NULL
   # it continues along row/column/diagonal to see if the end of that row/column diagonal has your piece in it,
   # returns true(eventually hits new colour piece) or false (eventually hits a blank)
-  return token
+  x = newtoken.x
+  y = newtoken.y
+  x1 = oldtoken.x
+  y2 = oldtoken.y
+  if x == x1:
+    i = y
+    if y < y1:
+      while i < size and not found:
+        if !token(x,i) or token(x,i).colour == newToken.colour:
+          found = true
+          if token(x,i).colour == newToken.colour:
+            valid = true
+            token = token(x,i)
+        i ++
+    else:
+      while i < 0 and not found:
+        if !token(x,i) or token(x,i).colour == newToken.colour:
+          found = true
+          if token(x,i).colour == newToken.colour:
+            valid = true
+            token = token(x,i)
+        i --
+  else if y == y1:
+    j = x
+    if x < x1:
+      while j < size and not found:
+        if !token(x,j) or token(x,j).colour == newToken.colour:
+          found = true
+          if token(x,j).colour == newToken.colour:
+            valid = true
+            token = token(j,y)
+        i ++
+    else:
+      while j > 0 and not found:
+        if !token(x,j) or token(x,j).colour == newToken.colour:
+          found = true
+          if token(x,j).colour == newToken.colour:
+            valid = true
+            token = token(j,y)
+        i --
+  else:
+    if x < x1 and y < y1:
+      for i in xrange(x,x1):
+        for j in xrange(y,y1):
+          while j < size and i < size and not found:
+            if !token(i,j) or token(i,j).colour == newToken.colour:
+              found = true
+              if token(i,j).colour == newToken.colour:
+                valid = true
+                token = token(i,j)
+            i ++
+            j ++
+    else if x > x1 and y < y1:
+      for i in xrange(x1,x):
+        for j in xrange(y,y1):
+          while j < size and i > 0 and not found:
+            if !token(i,j) or token(i,j).colour == newToken.colour:
+              found = true
+              if token(i,j).colour == newToken.colour:
+                valid = true
+                token = token(i,j)
+            i --
+            j ++
+    else if x < x1 and y > y1:
+      for i in xrange(x,x1):
+        for j in xrange(y1,y):
+          while j > 0 and i < size and not found:
+            if !token(i,j) or token(i,j).colour == newToken.colour:
+              found = true
+              if token(i,j).colour == newToken.colour:
+                valid = true
+                token = token(i,j)
+            i ++
+            j --
+    else:
+      for i in xrange(x1,x):
+        for j in xrange(y1,y):
+          while j > 0 and i > 0 and not found:
+            if !token(i,j) or token(i,j).colour == newToken.colour:
+              found = true
+              if token(i,j).colour == newToken.colour:
+                valid = true
+                token = token(i,j)
+            i --
+            j --
+ return token
+# THERE MUST BE A NICER WAY OF DOING THIS TO
 
-def evaluate(row):
+def evaluate(newToken, oldToken):
   # TO DO
   # returns two integers the first saying how much the playing players heuristic goes up, the second how much the others goes down
   current = 0
   opponent = 0
+  search = neighbours(newToken)
+  # from oponnent remove number of coins * const
+  if newToken == (token(0,0) or token(size,size) or token(0,size) or token(size,0)):
+    newToken.stabalise(10)
+  # if stablise value not 5 then make value one less than highest neighbour value
+  # do this for every flipped token
+  # add number of extra coins*const + token.stablise of each token to current
   return (current,opponent)
 
 def neighbours(token,goal):
