@@ -21,7 +21,7 @@ def move(token1, token2):
     else:
       for i in xrange(y1,y):
         token(x,i).flip()
-  else if y == y1:
+  elif y == y1:
     if x < x1:
       for j in xrange(x,x1):
         token(j,y).flip()
@@ -33,11 +33,11 @@ def move(token1, token2):
       for i in xrange(x,x1):
         for j in xrange(y,y1):
           token(i,j).flip()
-    else if x > x1 and y < y1:
+    elif x > x1 and y < y1:
       for i in xrange(x1,x):
         for j in xrange(y,y1):
           token(i,j).flip()
-    else if x < x1 and y > y1:
+    elif x < x1 and y > y1:
       for i in xrange(x,x1):
         for j in xrange(y1,y):
           token(i,j).flip()
@@ -60,7 +60,7 @@ def valid_moves(board, colour):
   #   or in the row/column/diagnonal next to it
   pieces = []
   for token in board.tokens:
-    if token.colour = other:
+    if token.colour == other:
       pieces.append(token)
   search = []
   for token in pieces:
@@ -89,84 +89,84 @@ def valid_row(newToken, oldToken, board):
     i = y
     if y < y1:
       while i < size and not found:
-        if !token(x,i) or token(x,i).colour == newToken.colour:
+        if not token(x,i) or token(x,i).colour == newToken.colour:
           found = true
           if token(x,i).colour == newToken.colour:
             valid = true
             token = token(x,i)
-        i ++
+        i = i + 1
     else:
       while i < 0 and not found:
-        if !token(x,i) or token(x,i).colour == newToken.colour:
+        if not token(x,i) or token(x,i).colour == newToken.colour:
           found = true
           if token(x,i).colour == newToken.colour:
             valid = true
             token = token(x,i)
-        i --
-  else if y == y1:
+        i = i - 1
+  elif y == y1:
     j = x
     if x < x1:
       while j < size and not found:
-        if !token(x,j) or token(x,j).colour == newToken.colour:
+        if not token(x,j) or token(x,j).colour == newToken.colour:
           found = true
           if token(x,j).colour == newToken.colour:
             valid = true
             token = token(j,y)
-        i ++
+        i = i + 1
     else:
       while j > 0 and not found:
-        if !token(x,j) or token(x,j).colour == newToken.colour:
+        if not token(x,j) or token(x,j).colour == newToken.colour:
           found = true
           if token(x,j).colour == newToken.colour:
             valid = true
             token = token(j,y)
-        i --
+        i = i - 1
   else:
     if x < x1 and y < y1:
       for i in xrange(x,x1):
         for j in xrange(y,y1):
           while j < size and i < size and not found:
-            if !token(i,j) or token(i,j).colour == newToken.colour:
+            if not token(i,j) or token(i,j).colour == newToken.colour:
               found = true
               if token(i,j).colour == newToken.colour:
                 valid = true
                 token = token(i,j)
-            i ++
-            j ++
-    else if x > x1 and y < y1:
+            i = i + 1
+            j = j + 1
+    elif x > x1 and y < y1:
       for i in xrange(x1,x):
         for j in xrange(y,y1):
           while j < size and i > 0 and not found:
-            if !token(i,j) or token(i,j).colour == newToken.colour:
+            if not token(i,j) or token(i,j).colour == newToken.colour:
               found = true
               if token(i,j).colour == newToken.colour:
                 valid = true
                 token = token(i,j)
-            i --
-            j ++
-    else if x < x1 and y > y1:
+            i = i - 1
+            j = j + 1
+    elif x < x1 and y > y1:
       for i in xrange(x,x1):
         for j in xrange(y1,y):
           while j > 0 and i < size and not found:
-            if !token(i,j) or token(i,j).colour == newToken.colour:
+            if not token(i,j) or token(i,j).colour == newToken.colour:
               found = true
               if token(i,j).colour == newToken.colour:
                 valid = true
                 token = token(i,j)
-            i ++
-            j --
+            i = i + 1
+            j = j - 1
     else:
       for i in xrange(x1,x):
         for j in xrange(y1,y):
           while j > 0 and i > 0 and not found:
-            if !token(i,j) or token(i,j).colour == newToken.colour:
+            if not token(i,j) or token(i,j).colour == newToken.colour:
               found = true
               if token(i,j).colour == newToken.colour:
                 valid = true
                 token = token(i,j)
-            i --
-            j --
- return token
+            i = i - 1
+            j = j - 1
+  return token
 # THERE MUST BE A NICER WAY OF DOING THIS TO
 
 def evaluate(newToken, oldToken):
@@ -186,5 +186,5 @@ def evaluate(newToken, oldToken):
 def neighbours(token,goal):
     # takes arguement type: blank/black/white; and a token
     # returns list of all such neighbours
-    search = [(i,j) for i in [-1,0,1] for j in [-1,0,1] if token(i,j) and token(i,j).colour = goal]
+    search = [(i,j) for i in [-1,0,1] for j in [-1,0,1] if token(i,j) and token(i,j).colour == goal]
     return search
