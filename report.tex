@@ -1,0 +1,46 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\pagestyle{fancy}
+\lhead{SID: 309201470}
+\rhead{SID: 310------}
+
+\title{COMP3608: Othello}
+\author{Elizaveta Lisa Fedorenko: 309201470
+\\ Tianyu Pu: 310------}
+\date{\today}
+\fancyhead[L]{309201470}
+\fancyhead[R]{310------}
+
+\begin{document}
+\maketitle
+
+\section{Implementation of Strategies}
+\subsection{Heuristic}
+The game of Othello is complex [INSERT STATISTIC AND REFERENCE]. We felt that each strategy didn't differ sufficiently to warrant a seperate evalutation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows [INSERT REFERENCE]:
+\begin{enumerate}
+\item \emph{Number of tokens} Obviously as the aim of the game is to have the most tokens, this is a good basic estimate of who is winning
+\item \emph{Stability} Certain pieces are a lot easier to 'flip' than others. In particular corners are very stable and cannot be flipped. Pieces protruding from corners also are more stable.
+\item \emph{mobility} Having more moves available means you are better positioned strategically and less constricted.
+\end{enumerate}
+Each of these methods has its own shortcomings and advantages [INSERT REFERENCE]. We therefore chose to implement a heuristic that weighted each method appropriately. Thus creating a much 'smarter' AI.
+Our heuristic can be represented thus:
+\begin{equation}
+h(\mbox{black}) = \mbox{number black pieces}*f(\mbox{pieces}) + \mbox{factor}*\mbox{number available moves}
+\end{equation}
+Where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
+\subsection{Strategy A}
+\subsection{Strategy B}
+\subsection{Strategy C}
+\section{Findings}
+\subsection{Results}
+\subsection{Conclusion}
+\section{Reflection}
+\section{Appendix}
+\subsection{Strategy A}
+\subsection{Strategy B}
+\subsection{Strategy C}
+\end{document}
