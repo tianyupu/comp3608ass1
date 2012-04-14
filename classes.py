@@ -1,15 +1,22 @@
-class token(object):
-  stability = 1 # weighting of stability that the token currently has
+#!/usr/bin/python
+
+class Token(object):
   def __init__(self, x, y, colour):
     self.x = x
     self.y = y
     self.colour = colour
+    self.stability = 1 # weighting of stability that the token currently has
   def flip(self):
-    self.colour = self.colour=='black' and 'white' or 'black'
+    if self.colour == 'B':
+      self.colour = 'W'
+    else:
+      self.colour = 'B'
   def stabilise(st):
     stability = st
+  def __str__(self):
+    return self.colour
 
-class board(object):
+class Board(object):
   tokens = []
   def __init__(self, size): #anything else?
     self.size = size
