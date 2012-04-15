@@ -3,20 +3,29 @@
 import sys
 
 class Token(object):
-  """ These are the pieces placed on the board """
   def __init__(self, x, y, colour=' ', stability=1):
+    """Create a new token.
+    
+    Arguments:
+    x -- the x-coordinate of the token, indicating the row it's in
+    y -- the y-coordinate of the token, indicating the column it's in
+    colour -- the colour of the token, can be 'B', 'W' or ' '
+    stability -- the stability of the token
+    """
     self.x = x
     self.y = y
     self.colour = colour
     self.stability = 1 # weighting of stability that the token currently has
   def flip(self):
-    """When an opponent captures a token of another colour"""
+    """Flips the current colour of the token.
+    Only works on tokens that are not blank.
+    """
     if self.colour == 'B':
       self.colour = 'W'
     else:
       self.colour = 'B'
   def stabilise(st): # not used currently
-    """ Used to assess the stability of a token, this is used in the heuristic """
+    """Used to assess the stability of a token, this is used in the heuristic """
     self.stability = st
   def __str__(self):
     return self.colour
@@ -67,6 +76,7 @@ class Board(object):
     return boardstr
   def update(self, x, y):
     # TIAN I'M NOT SURE ABOUT THIS EG. WHAT IF WE ARE ADDING A TOKEN
+    # Yes you are absolutely correct -- I haven't implemented it yet :(
     self.tokens[y][x].flip()
   def get_size(self):
     return self.size
