@@ -5,7 +5,7 @@ import sys
 class Token(object):
   def __init__(self, x, y, colour=' ', stability=1):
     """Create a new token.
-    
+
     Arguments:
     x -- the x-coordinate of the token, indicating the row it's in
     y -- the y-coordinate of the token, indicating the column it's in
@@ -92,7 +92,7 @@ class Board(object):
     If no tokens exist because the coordinates are off the board, then one or
     more Nones will appear in the resulting list.
     """
-    toks = [self.get_token(x,y-1), self.get_token(x,y+1), self.get_token(x-1,y), self.get_token(x+1,y), self.get_token(x-1,y-1), self.get_token(x-1,y+1), self.get_token(x+1,y-1), self.get_token(x+1,y+1)] # TIAN I ADDED THE DIAGONALS, THE ASSIGNMENT DESCRIPTION ASKS FOR THEM
+    toks = [self.get_token(x,y-1), self.get_token(x,y+1), self.get_token(x-1,y), self.get_token(x+1,y)]
     return toks
   def get_alltoks(self):
     """Return a list of all tokens on the board as a one-dimensional list."""
@@ -101,20 +101,20 @@ class Board(object):
       for j in xrange(self.size):
         toks.append(self.tokens[j][i])
     return toks
-  def get_row(self, y):
-    """Returns a row of the board as a list, given the y-coordinate, or None if the
-    row does not exist.
-    """
-    if y < 0 or y > self.get_size()-1:
-      return None
-    return self.tokens[y]
-  def get_column(self, x):
-    if x < 0 or y > self.get_size()-1:
-      return None
-    toks = []
-    for i in xrange(self.get_size()):
-      toks.append(self.tokens[i][x])
-    return toks
+# def get_row(self, y):
+#   """Returns a row of the board as a list, given the y-coordinate, or None if the
+#   row does not exist.
+#   """
+#   if y < 0 or y > self.get_size()-1:
+#     return None
+#   return self.tokens[y]
+# def get_column(self, x):
+#   if x < 0 or y > self.get_size()-1:
+#     return None
+#   toks = []
+#   for i in xrange(self.get_size()):
+#     toks.append(self.tokens[i][x])
+#   return toks
 # def get_forward_diag(self, x, y):
 #   if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
 #     return None
@@ -166,16 +166,26 @@ class Game(object):
 
     Assume well-formed input for now.
     """
-    line = raw_input("Type your move in the form 'x, y'\n").strip()
+    line = raw_input("Type your move in the form 'x y'\n").strip()
     x, y = line.split()
     return int(x), int(y)
   def make_move(self, x, y):
-    self.curr_player = int(not self.curr_player) # flip the player
+    self.curr_player = int(not self.curr_player) # switch player turn
     self.is_valid(self.board.get_token(x,y), self.get_currplayercolr(), update=True)
+    # This function should update board, it currently only switches players and checks if it is a valid move... not doing anything if it's not valid
+    # if self.is_valid(self.board.get_token(x,y), self.get_currplayercolr(), update=True):
+    #   accept move: update the board
+    # else:
+    #   new = raw_input("invalid move, try again or type 'pass'")
   def valid_moves(self, colour):
     moves = set()
     other_col = 'W' if colour == 'B' else 'B'
     for tok in self.board.get_alltoks():
+      # here we are checking
+      # 1. find a token of the oponnents colour
+      # 2. check that it has a blank square next to it
+      # 3. check that on the opposite side of the blank square is either:
+      # a token of your colour or a row/column of the opponents colour then your own
       if tok.get_colour() == other_col: # if the colour of the token is of the opposing side,
         adj = self.board.get_adjacent(tok.get_x(), tok.get_y()) # get all its adjacent tokens
         for adjtoken in adj:
