@@ -188,3 +188,11 @@ def neighbours(token,goal):
     # returns list of all such neighbours
     search = [(i,j) for i in [-1,0,1] for j in [-1,0,1] if token(i,j) and token(i,j).colour == goal]
     return search
+
+def eval1(board,player):
+  toks = board.get_alltoks()
+  mytoks = []
+  for tok in toks:
+    if tok.colour == player.colour:
+      mytoks.append(tok)
+  return size(mytoks)

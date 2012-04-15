@@ -9,7 +9,7 @@ def minimax(board, game, depth=3):
     if level <= depth:
       value = lost
       for move in valid_moves():
-        value = max(value,min_val(evaluate(move)[0]))
+        value = max(value,min_val(eval1(move)[0]))
       return value
     else:
       return lost #smallest possible heuristic therefore will never be chosen
@@ -19,7 +19,7 @@ def minimax(board, game, depth=3):
     if level <= depth:
       value = won
       for move in valid_moves():
-        value = min(value,max_value(evaluate(move)[1]))
+        value = min(value,max_value(eval1(move)[1]))
       return value
     else:
       return won #largest possible heuristic therefore will never be chosen

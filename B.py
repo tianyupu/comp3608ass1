@@ -10,7 +10,7 @@ def alpha_beta(board, game):
     if level <= depth:
       value = lost
       for move in valid_moves():
-        value = max(value,min_val(evaluate(move), alpha, beta))
+        value = max(value,min_val(eval1(move), alpha, beta))
         if value >= beta:
           return value
         alpha = max(alpha, value)
@@ -23,7 +23,7 @@ def alpha_beta(board, game):
     if level <= depth:
       value = won
       for move in valid_moves():
-        value = min(value, max_value(evaluate(move), alpha, beta))
+        value = min(value, max_value(eval1(move), alpha, beta))
         if value <= alpha:
           return value
         beta = min(beta, value)
