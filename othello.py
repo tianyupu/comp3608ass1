@@ -3,17 +3,20 @@
 import sys
 
 class Token(object):
+  """ These are the pieces placed on the board """
   def __init__(self, x, y, colour=' ', stability=1):
     self.x = x
     self.y = y
     self.colour = colour
     self.stability = 1 # weighting of stability that the token currently has
   def flip(self):
+    """When an opponent captures a token of another colour"""
     if self.colour == 'B':
       self.colour = 'W'
     else:
       self.colour = 'B'
   def stabilise(st): # not used currently
+    """ Used to assess the stability of a token, this is used in the heuristic """
     self.stability = st
   def __str__(self):
     return self.colour
@@ -35,6 +38,7 @@ class Token(object):
     return False
 
 class Board(object):
+  """ Defines the board on which the game is played """
   def __init__(self, size):
     self.size = size
     self.tokens = []
@@ -52,7 +56,7 @@ class Board(object):
         temp.append(Token(j,i))
       self.tokens.append(temp)
   def __str__(self):
-    # return a pretty string representation of the board that can be printed
+    """ return a pretty string representation of the board that can be printed """
     topborder = '+%s+' % ('-' * self.size)
     boardgrid = [topborder]
     for i in xrange(self.size):
@@ -62,6 +66,7 @@ class Board(object):
     boardstr = '\n'.join(boardgrid)
     return boardstr
   def update(self, x, y):
+    # TIAN I'M NOT SURE ABOUT THIS EG. WHAT IF WE ARE ADDING A TOKEN
     self.tokens[y][x].flip()
   def get_size(self):
     return self.size
@@ -73,11 +78,11 @@ class Board(object):
       return None
     return self.tokens[y][x]
   def get_adjacent(self, x, y):
-    """Returns a list of the 4 tokens surrounding the token located at (x, y).
+    """Returns a list of the 8 tokens surrounding the token located at (x, y).
     If no tokens exist because the coordinates are off the board, then one or
     more Nones will appear in the resulting list.
     """
-    toks = [self.get_token(x,y-1), self.get_token(x,y+1), self.get_token(x-1,y), self.get_token(x+1,y)]
+    toks = [self.get_token(x,y-1), self.get_token(x,y+1), self.get_token(x-1,y), self.get_token(x+1,y), self.get_token(x-1,y-1), self.get_token(x-1,y+1), self.get_token(x+1,y-1), self.get_token(x+1,y+1)] # TIAN I ADDED THE DIAGONALS, THE ASSIGNMENT DESCRIPTION ASKS FOR THEM
     return toks
   def get_alltoks(self):
     """Return a list of all tokens on the board as a one-dimensional list."""
@@ -100,8 +105,26 @@ class Board(object):
     for i in xrange(self.get_size()):
       toks.append(self.tokens[i][x])
     return toks
+  def get_forward_diag(self, x, y):
+    if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
+      return None
+    toks = []
+    diff = y-x
+    for i in xrange(self.get_size()):
+      toks.append(self.tokens[i][i+diff] # NEED TO DOUBLE CHECK THIS
+    return toks
+  def get_backward_diag(self, x, y):
+    if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
+      return None
+    toks = []
+    diff = y-x
+    for i in xrange(self.get_size()):
+      toks.append(self.tokens[i+diff][i] # NEED TO DOUBLE CHECK THIS
+    return toks
+
 
 class Player(object):
+  """ Defines a player """
   def __init__(self, name, colour):
     self.name = name
     if colour in 'BW':
@@ -114,10 +137,10 @@ class Player(object):
 class Game(object):
   def __init__(self, size=8, difficulty=0):
     """Creates a new Othello game.
-    
+
     Arguments:
     size -- the desired size of the Othello board (default 8)
-    difficulty -- the desired difficulty of the computer opponent (default 0)
+    difficulty -- the desired difficulty of the computer opponent (default 0). This affects the depth of the search space in the mini-max algorithm etc.
     """
     self.size = size
     self.difficulty = difficulty
@@ -130,7 +153,7 @@ class Game(object):
     return self.players[self.curr_player].get_colour()
   def get_move(self):
     """Gets a move from the player in the form (x, y).
-    
+
     Assume well-formed input for now.
     """
     line = raw_input().strip()
