@@ -105,22 +105,22 @@ class Board(object):
     for i in xrange(self.get_size()):
       toks.append(self.tokens[i][x])
     return toks
-  def get_forward_diag(self, x, y):
-    if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
-      return None
-    toks = []
-    diff = y-x
-    for i in xrange(self.get_size()):
-      toks.append(self.tokens[i][i+diff] # NEED TO DOUBLE CHECK THIS
-    return toks
-  def get_backward_diag(self, x, y):
-    if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
-      return None
-    toks = []
-    diff = y-x
-    for i in xrange(self.get_size()):
-      toks.append(self.tokens[i+diff][i] # NEED TO DOUBLE CHECK THIS
-    return toks
+# def get_forward_diag(self, x, y):
+#   if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
+#     return None
+#   toks = []
+#   diff = y-x
+#   for i in xrange(self.get_size()):
+#     toks.append(self.tokens[i][i+diff] # NEED TO DOUBLE CHECK THIS
+#   return toks
+# def get_backward_diag(self, x, y):
+#   if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
+#     return None
+#   toks = []
+#   diff = y-x
+#   for i in xrange(self.get_size()):
+#     toks.append(self.tokens[i+diff][i] # NEED TO DOUBLE CHECK THIS
+#   return toks
 
 
 class Player(object):
@@ -145,7 +145,7 @@ class Game(object):
     self.size = size
     self.difficulty = difficulty
     self.board = Board(size)
-    self.players = [Player(raw_input(), 'B'), Player(raw_input(), 'W')] # HACKY FOR NOW
+    self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
     self.curr_player = 0
   def get_currplayername(self):
     return self.players[self.curr_player].get_name()
@@ -156,7 +156,7 @@ class Game(object):
 
     Assume well-formed input for now.
     """
-    line = raw_input().strip()
+    line = raw_input("Type your move in the form 'x, y'\n").strip()
     x, y = line.split()
     return int(x), int(y)
   def make_move(self, x, y):
