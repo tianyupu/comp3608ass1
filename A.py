@@ -1,34 +1,28 @@
 # Minimax Algorithm
 import util
 
-# need to add evaluation function
-
 def minimax(board, game, depth=3):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3"""
   level = 1
   def max_val(board):
     level = level + 1
-    if # game has ended with computer winning:
-      return won
     if level <= depth:
       value = lost
-      for (a,s) in valid_moves():
-        value = max(v,min_val(s))
+      for move in valid_moves():
+        value = max(value,min_val(evaluate(move)[0]))
       return value
     else:
-      break
+      return lost #smallest possible heuristic therefore will never be chosen
 
   def min_val(board):
     level = level + 1
-    if # game has ended with computer losing:
-      return lost
     if level <= depth:
       value = won
-      for (a,s) in valid_moves():
-        value = min(v,max_value(s))
-      return v
+      for move in valid_moves():
+        value = min(value,max_value(evaluate(move)[1]))
+      return value
     else:
-      break
+      return won #largest possible heuristic therefore will never be chosen
 
-  a,s = argmax(valid_moves(), lambda ((ac,st)): min_value(st))
+  a,s = argmax(valid_moves(), lambda ((ac,board)): min_value(board))
   return a
