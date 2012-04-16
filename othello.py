@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import sys
-
 class Token(object):
   def __init__(self, x, y, colour=' ', stability=1):
     """Create a new token.
@@ -16,21 +14,24 @@ class Token(object):
     self.y = y
     self.colour = colour
     self.stability = 1 # weighting of stability that the token currently has
-  def flip(self):
-    """Flips the current colour of the token.
-    Only works on tokens that are not blank.
-    """
-    if self.colour == 'B':
-      self.colour = 'W'
-    else:
-      self.colour = 'B'
-  def stabilise(st): # not used currently
-    """Used to assess the stability of a token, this is used in the heuristic """
+  def change_colour(self, colour=None):
+    """Changes the colour of the token. If colour is provided, change the colour
+    of the token to the one indicated. If colour is omitted, flips the colour
+    of the token to the other colour."""
+    if not colour:
+      if self.colour == 'B':
+        self.colour = 'W'
+      else:
+        self.colour = 'B'
+    elif colour in 'BW':
+      self.colour = colour
+  def stabilise(self, st): # not used currently
+    """Changes the stability of the token to st."""
     self.stability = st
   def __str__(self):
     return self.colour
   def __repr__(self):
-    return '(%s, %s, %s)' % (self.colour, self.x, self.y)
+    return '(%s, %s)' % (self.x, self.y)
   def get_colour(self):
     return self.colour
   def get_x(self):
@@ -47,7 +48,6 @@ class Token(object):
     return False
 
 class Board(object):
-  """ Defines the board on which the game is played """
   def __init__(self, size):
     self.size = size
     self.tokens = []
@@ -65,33 +65,35 @@ class Board(object):
         temp.append(Token(j,i))
       self.tokens.append(temp)
   def __str__(self):
-    """ return a pretty string representation of the board that can be printed """
+    """Returns a player-friendly representation of the board that is printable."""
+    horizcoords = ' ' + ''.join([str(i) for i in xrange(self.size)]) + ' '
     topborder = '+%s+' % ('-' * self.size)
-    boardgrid = [topborder]
+    boardgrid = [horizcoords, topborder]
     for i in xrange(self.size):
-      row = '|' + ''.join([t.get_colour() for t in self.tokens[i]]) + '|'
+      row = '|' + ''.join([t.get_colour() for t in self.tokens[i]]) + '|%s' % i
       boardgrid.append(row)
     boardgrid.append(topborder)
     boardstr = '\n'.join(boardgrid)
     return boardstr
-  def update(self, x, y):
-    # TIAN I'M NOT SURE ABOUT THIS EG. WHAT IF WE ARE ADDING A TOKEN
-    # Yes you are absolutely correct -- I haven't implemented it yet :(
-    self.tokens[y][x].flip()
+  def update_token(self, x, y, colour=None):
+    """Updates the token at (x, y) by flipping its colour. If colour is given,
+    changes the blank token at that position to be the colour indicated."""
+    if not colour:
+      self.tokens[y][x].change_colour()
+    elif colour in 'BW':
+      self.tokens[y][x].change_colour(colour)
   def get_size(self):
     return self.size
   def get_token(self, x, y):
     """Get the token in the board at a particular coordinate indicated by (x, y).
-    If the index is out of bounds, return None.
-    """
+    If the index is out of bounds, return None."""
     if x < 0 or x > self.get_size()-1 or y < 0 or y > self.get_size()-1:
       return None
     return self.tokens[y][x]
   def get_adjacent(self, x, y):
     """Returns a list of the 8 tokens surrounding the token located at (x, y).
     If no tokens exist because the coordinates are off the board, then one or
-    more Nones will appear in the resulting list.
-    """
+    more Nones will appear in the resulting list."""
     toks = [self.get_token(x,y-1), self.get_token(x,y+1), self.get_token(x-1,y), self.get_token(x+1,y)]
     return toks
   def get_alltoks(self):
@@ -132,9 +134,7 @@ class Board(object):
 #     toks.append(self.tokens[i+diff][i] # NEED TO DOUBLE CHECK THIS
 #   return toks
 
-
 class Player(object):
-  """ Defines a player """
   def __init__(self, name, colour):
     self.name = name
     if colour in 'BW':
@@ -166,19 +166,67 @@ class Game(object):
 
     Assume well-formed input for now.
     """
-    line = raw_input("Type your move in the form 'x y'\n").strip()
+    line = raw_input("Type your move in the form 'x y' (without quotes): ").strip()
     x, y = line.split()
     return int(x), int(y)
-  def make_move(self, x, y):
+  def make_move(self, x, y, moveset):
+    newcolour = self.get_currplayercolr()
+    self.board.update_token(x, y, newcolour)
     self.curr_player = int(not self.curr_player) # switch player turn
-    self.is_valid(self.board.get_token(x,y), self.get_currplayercolr(), update=True)
-    # This function should update board, it currently only switches players and checks if it is a valid move... not doing anything if it's not valid
-    # if self.is_valid(self.board.get_token(x,y), self.get_currplayercolr(), update=True):
-    #   accept move: update the board
-    # else:
-    #   new = raw_input("invalid move, try again or type 'pass'")
+    row, col, diag = moveset[(x, y)]
+    if row:
+      left, right = row
+      if left:
+        for i in xrange(left+1, x):
+          self.board.update_token(i, y, newcolour)
+      if right:
+        for i in xrange(x+1, right):
+          self.board.update_token(i, y, newcolour)
+    if col:
+      top, bottom = col
+      if top:
+        for i in xrange(top+1, y):
+          self.board.update_token(x, i, newcolour)
+      if bottom:
+        for i in xrange(y+1, bottom):
+          self.board.update_token(x, i, newcolour)
+    if diag:
+      topl, topr, botl, botr = diag
+      if topl:
+        nx, ny = topl
+        nx += 1
+        ny += 1
+        while nx < x and ny < y:
+          self.board.update_token(nx, ny, newcolour)
+          nx += 1
+          ny += 1
+      if botr:
+        nx, ny = botr
+        nx -= 1
+        ny -= 1
+        while nx > x and ny > y:
+          self.board.update_token(nx, ny, newcolour)
+          nx -= 1
+          ny -= 1
+      if topr:
+        nx, ny = topr
+        nx -= 1
+        ny += 1
+        while nx > x and ny < y:
+          self.board.update_token(nx, ny, newcolour)
+          nx -= 1
+          ny += 1
+      if botl:
+        nx, ny = botl
+        nx += 1
+        ny -= 1
+        while nx < x and ny > y:
+          self.board.update_token(nx, ny, newcolour)
+          nx += 1
+          ny -= 1
   def valid_moves(self, colour):
-    moves = set()
+    moves = {}
+    candidates = set()
     other_col = 'W' if colour == 'B' else 'B'
     for tok in self.board.get_alltoks():
       # here we are checking
@@ -190,15 +238,21 @@ class Game(object):
         adj = self.board.get_adjacent(tok.get_x(), tok.get_y()) # get all its adjacent tokens
         for adjtoken in adj:
           if adjtoken is not None and adjtoken.get_colour() == ' ': # if any of these adjacent tokens are blank,
-            moves.add(adjtoken) # then it's a possible place to put our next token
-    for move in list(moves):
-      if not self.is_valid(move, colour):
-        moves.remove(move)
-    return list(moves)
-  def is_valid(self, token, colour, update=False):
-    if self.check_row(token, colour, update) or self.check_col(token, colour, update) or self.check_diag(token, colour, update):
-      return True
-  def check_row(self, token, colour, update=False):
+            candidates.add(adjtoken) # then it's a possible place to put our next token
+    for c in candidates:
+      ret = self.has_move(c, colour)
+      if ret:
+        cx, cy = c.get_x(), c.get_y()
+        moves[(cx,cy)] = ret
+    return moves
+  def has_move(self, token, colour):
+    row = self.check_row(token, colour)
+    col = self.check_col(token, colour)
+    diag = self.check_diag(token, colour)
+    if any([row, col, diag]):
+      return row, col, diag
+    return False
+  def check_row(self, token, colour):
     tx = token.get_x()
     ty = token.get_y()
     left, right = None, None
@@ -209,9 +263,6 @@ class Game(object):
         break # if there's a blank space there, there's nothing to flank
       if currtok.get_colour() == colour:
         left = x # set the x-coord of the leftmost flank
-      else:
-        if update:
-          self.board.update(x, ty)
       x -= 1
     x = tx + 1
     while x < self.board.get_size(): # scan to the right of the token to find a right flank
@@ -220,14 +271,11 @@ class Game(object):
         break # if there's a blank space there, there's nothing to flank
       if currtok.get_colour() == colour:
         right = x # set the x-coord of the leftmost flank
-      else:
-        if update:
-          self.board.update(x, ty)
       x += 1
-    if left is None and right is None:
+    if (left is None or tx-left == 1) and (right is None or right-tx == 1):
       return False
-    return True
-  def check_col(self, token, colour, update=False):
+    return left, right
+  def check_col(self, token, colour):
     tx = token.get_x()
     ty = token.get_y()
     top, bottom = None, None
@@ -238,9 +286,6 @@ class Game(object):
         break # if there's a blank space there, there's nothing to flank
       if currtok.get_colour() == colour:
         top = y # set the y-coord of the topmost flank
-      else:
-        if update:
-          self.board.update(tx, y)
       y -= 1
     y = ty + 1
     while y < self.board.get_size(): # scan to the bottom of the token to find a right flank
@@ -249,27 +294,21 @@ class Game(object):
         break # if there's a blank space there, there's nothing to flank
       if currtok.get_colour() == colour:
         bottom = y # set the y-coord of the bottom-most flank
-      else:
-        if update:
-          self.board.update(tx, y)
       y += 1
-    if top is None and bottom is None:
+    if (top is None or ty-top == 1) and (bottom is None or bottom-ty == 1):
       return False
-    return True
-  def check_diag(self, token, colour, update=False):
+    return top, bottom
+  def check_diag(self, token, colour):
     tx = token.get_x()
     ty = token.get_y()
     x, y = tx-1, ty-1
-    topleft, topright, botleft, botright = None, None, None, None
+    coords = [None, None, None, None] # topl, topr, botl, botr
     while x >= 0 and y >= 0:
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour:
-        topleft = (x, y)
-      else:
-        if update:
-          self.board.update(x, y)
+      if currtok.get_colour() == colour and tx-x > 1 and ty-y > 1:
+        coords[0] = (x, y)
       x -= 1
       y -= 1
     x, y = tx+1, ty+1
@@ -277,39 +316,30 @@ class Game(object):
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour:
-        botright = (x, y)
-      else:
-        if update:
-          self.board.update(x, y)
+      if currtok.get_colour() == colour and x-tx > 1 and y-ty > 1:
+        coords[3] = (x, y)
       x += 1
       y += 1
     x, y = tx-1, ty+1
-    while x < self.board.get_size() and y >= 0:
-      currtok = self.board.get_token(x, y)
-      if currtok.get_colour() == ' ':
-        break
-      if currtok.get_colour() == colour:
-        botleft = (x, y)
-      else:
-        if update:
-          self.board.update(x, y)
-      x -= 1
-      y += 1
-    x, y = tx+1, ty-1
     while x >= 0 and y < self.board.get_size():
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour:
-        topright = (x, y)
-      else:
-        if update:
-          self.board.update(x, y)
+      if currtok.get_colour() == colour and tx-x > 1 and y-ty > 1:
+        coords[2] = (x, y)
+      x -= 1
+      y += 1
+    x, y = tx+1, ty-1
+    while x < self.board.get_size() and y >= 0:
+      currtok = self.board.get_token(x, y)
+      if currtok.get_colour() == ' ':
+        break
+      if currtok.get_colour() == colour and x-tx > 1 and ty-y > 1:
+        coords[1] = (x, y)
       x += 1
       y -= 1
-    if any([topleft, topright, botleft, botright]):
-      return True
+    if any(coords):
+      return tuple(coords)
     return False
   def premove(self):
     # check if the game has finished:
@@ -317,12 +347,13 @@ class Game(object):
     valids = self.valid_moves(self.get_currplayercolr())
     other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
-      print 'The game has ended! ___ wins!\n' # TO BE IMPLEMENTED
+      print 'The game has ended! ___ wins!' # TO BE IMPLEMENTED: says who wins and the score
       return 1
     if len(valids) == 0: # curr player has no valid moves, so skips a turn
-      print '%s has no valid moves this turn, so we move to the other player!\n' % self.get_currplayername()
+      print '%s has no valid moves this turn, so we move to the other player!' % self.get_currplayername()
       self.curr_player = int(not self.curr_player)
-    return 0 # not really needed
+      return 2
+    return valids
   def __str__(self):
     gamestr = "This is a %sx%s game of Othello. It's %s's turn to move.\n" \
       % (self.size, self.size, self.get_currplayername())
@@ -332,9 +363,15 @@ class Game(object):
       ret = self.premove()
       if ret == 1:
         break
+      if ret == 2:
+        continue
       print self
+      print ret
       nx, ny = self.get_move()
-      self.make_move(nx, ny)
+      while (nx, ny) not in ret:
+        print "The move you entered was invalid. Please try again!"
+        nx, ny = self.get_move()
+      self.make_move(nx, ny, ret)
 
 if __name__ == '__main__':
   g = Game()
