@@ -240,102 +240,131 @@ class Game(object):
           if adjtoken is not None and adjtoken.get_colour() == ' ': # if any of these adjacent tokens are blank,
             candidates.add(adjtoken) # then it's a possible place to put our next token
     for c in candidates:
-      ret = self.has_move(c, colour)
+      ret = self.has_move(c, colour, other_col)
       if ret:
         cx, cy = c.get_x(), c.get_y()
         moves[(cx,cy)] = ret
     return moves
-  def has_move(self, token, colour):
-    row = self.check_row(token, colour)
-    col = self.check_col(token, colour)
-    diag = self.check_diag(token, colour)
+  def has_move(self, token, colour, other_col):
+    row = self.check_row(token, colour, other_col)
+    col = self.check_col(token, colour, other_col)
+    diag = self.check_diag(token, colour, other_col)
     if any([row, col, diag]):
       return row, col, diag
     return False
-  def check_row(self, token, colour):
+  def check_row(self, token, colour, other_col):
     tx = token.get_x()
     ty = token.get_y()
     left, right = None, None
+    othertoks = 0
     x = tx - 1
     while x >= 0: # scan to the left of the token to find a left flank
       currtok = self.board.get_token(x, ty)
       if currtok.get_colour() == ' ':
         break # if there's a blank space there, there's nothing to flank
-      if currtok.get_colour() == colour:
+      elif currtok.get_colour() == colour and othertoks > 0:
         left = x # set the x-coord of the leftmost flank
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       x -= 1
     x = tx + 1
+    othertoks = 0
     while x < self.board.get_size(): # scan to the right of the token to find a right flank
       currtok = self.board.get_token(x, ty)
       if currtok.get_colour() == ' ':
         break # if there's a blank space there, there's nothing to flank
-      if currtok.get_colour() == colour:
+      elif currtok.get_colour() == colour and othertoks > 0:
         right = x # set the x-coord of the leftmost flank
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       x += 1
-    if (left is None or tx-left == 1) and (right is None or right-tx == 1):
+    if left is None and right is None:
       return False
     return left, right
-  def check_col(self, token, colour):
+  def check_col(self, token, colour, other_col):
     tx = token.get_x()
     ty = token.get_y()
     top, bottom = None, None
+    othertoks = 0
     y = ty - 1
     while y >= 0: # scan to the top of the token to find a top flank
       currtok = self.board.get_token(tx, y)
       if currtok.get_colour() == ' ':
         break # if there's a blank space there, there's nothing to flank
-      if currtok.get_colour() == colour:
+      elif currtok.get_colour() == colour and othertoks > 0:
         top = y # set the y-coord of the topmost flank
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       y -= 1
     y = ty + 1
+    othertoks = 0
     while y < self.board.get_size(): # scan to the bottom of the token to find a right flank
       currtok = self.board.get_token(tx, y)
       if currtok.get_colour() == ' ':
         break # if there's a blank space there, there's nothing to flank
-      if currtok.get_colour() == colour:
+      elif currtok.get_colour() == colour and othertoks > 0:
         bottom = y # set the y-coord of the bottom-most flank
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       y += 1
-    if (top is None or ty-top == 1) and (bottom is None or bottom-ty == 1):
+    #if (top is None or ty-top == 1) and (bottom is None or bottom-ty == 1):
+    if top is None and bottom is None:
       return False
     return top, bottom
-  def check_diag(self, token, colour):
+  def check_diag(self, token, colour, other_col):
     tx = token.get_x()
     ty = token.get_y()
+    othertoks = 0
     x, y = tx-1, ty-1
     coords = [None, None, None, None] # topl, topr, botl, botr
     while x >= 0 and y >= 0:
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour and tx-x > 1 and ty-y > 1:
+      #if currtok.get_colour() == colour and tx-x > 1 and ty-y > 1:
+      elif currtok.get_colour() == colour and othertoks > 0:
         coords[0] = (x, y)
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       x -= 1
       y -= 1
     x, y = tx+1, ty+1
+    othertoks = 0
     while x < self.board.get_size() and y < self.board.get_size():
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour and x-tx > 1 and y-ty > 1:
+      #if currtok.get_colour() == colour and x-tx > 1 and y-ty > 1:
+      elif currtok.get_colour() == colour and othertoks > 0:
         coords[3] = (x, y)
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       x += 1
       y += 1
     x, y = tx-1, ty+1
+    othertoks = 0 
     while x >= 0 and y < self.board.get_size():
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour and tx-x > 1 and y-ty > 1:
+      #if currtok.get_colour() == colour and tx-x > 1 and y-ty > 1:
+      elif currtok.get_colour() == colour and othertoks > 0:
         coords[2] = (x, y)
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       x -= 1
       y += 1
     x, y = tx+1, ty-1
+    othertoks = 0
     while x < self.board.get_size() and y >= 0:
       currtok = self.board.get_token(x, y)
       if currtok.get_colour() == ' ':
         break
-      if currtok.get_colour() == colour and x-tx > 1 and ty-y > 1:
+      #if currtok.get_colour() == colour and x-tx > 1 and ty-y > 1:
+      elif currtok.get_colour() == colour and othertoks > 0:
         coords[1] = (x, y)
+      elif currtok.get_colour() == other_col:
+        othertoks += 1
       x += 1
       y -= 1
     if any(coords):
