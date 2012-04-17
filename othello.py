@@ -103,36 +103,6 @@ class Board(object):
       for j in xrange(self.size):
         toks.append(self.tokens[j][i])
     return toks
-# def get_row(self, y):
-#   """Returns a row of the board as a list, given the y-coordinate, or None if the
-#   row does not exist.
-#   """
-#   if y < 0 or y > self.get_size()-1:
-#     return None
-#   return self.tokens[y]
-# def get_column(self, x):
-#   if x < 0 or y > self.get_size()-1:
-#     return None
-#   toks = []
-#   for i in xrange(self.get_size()):
-#     toks.append(self.tokens[i][x])
-#   return toks
-# def get_forward_diag(self, x, y):
-#   if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
-#     return None
-#   toks = []
-#   diff = y-x
-#   for i in xrange(self.get_size()):
-#     toks.append(self.tokens[i][i+diff] # NEED TO DOUBLE CHECK THIS
-#   return toks
-# def get_backward_diag(self, x, y):
-#   if x < 0 or y > self.get_size()-1 or y < 0 or y > self.get_size()-1:
-#     return None
-#   toks = []
-#   diff = y-x
-#   for i in xrange(self.get_size()):
-#     toks.append(self.tokens[i+diff][i] # NEED TO DOUBLE CHECK THIS
-#   return toks
 
 class Player(object):
   def __init__(self, name, colour):
@@ -376,16 +346,45 @@ class Game(object):
     valids = self.valid_moves(self.get_currplayercolr())
     other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
-      print 'The game has ended! ___ wins!' # TO BE IMPLEMENTED: says who wins and the score
+      # finding out who the winner is
+      # PROBABLY FASTER TO JUST KEEP A COUNT OF THE WHITE AND BLACK TOKS IN THE BOARD
+      toks = self.board.get_alltoks()
+      white = 0
+      black = 0
+      for tok in toks:
+        if tok.get_colour == 'W':
+          print 'white\n'
+          white = white + 1
+        else:
+          black = black + 1
+          print 'black\n'
+      if white > black:
+        winner = 'W'
+      elif black < white:
+        winner = 'B'
+      else:
+        winner = 'tie'
+      print 'white %s, black %s, size(toks) %s)' %(white, black,len(toks))
+      if winner == 'tie':
+        print 'The game has ended! It\'s a tie =)'
+      else:
+        if self.get_currplayercolr == winner:
+          winPlay = self.get_currplayername()
+          lossPlay = self.get_otherplayername()
+        else:
+          winPlay = self.get_otherplayername()
+          lossPlay = self.get_currplayername()
+        print 'The game has ended! %s wins! %s got %d points, %s got only %d\n' \
+        % (winPlay, winPlay, max(black,white), lossPlay, min(black,white))
       return 1
     if len(valids) == 0: # curr player has no valid moves, so skips a turn
-      print '%s has no valid moves this turn, so we move to the other player!' % self.get_currplayername()
+      print '%s has no valid moves this turn, so we move to the other player!\n' % self.get_currplayername()
       self.curr_player = int(not self.curr_player)
       return 2
     return valids
   def __str__(self):
-    gamestr = "This is a %sx%s game of Othello. It's %s's turn to move.\n" \
-      % (self.size, self.size, self.get_currplayername())
+    gamestr = "This is a %sx%s game of Othello. It's %s's turn to move (%s).\n" \
+      % (self.size, self.size, self.get_currplayername(), self.get_currplayercolr())
     return gamestr + str(self.board)
   def run(self):
     while 1:

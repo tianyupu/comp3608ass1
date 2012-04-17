@@ -3,7 +3,7 @@ import util
 
 # start by doing basic minimax
 # but add in additional checks to allow break points i.e. pruning
-def alpha_beta(board, game):
+def alpha_beta(board, game, alpha, beta, depth):
   level = 1
   def max_val(board, alpha, beta):
     level = level + 1
