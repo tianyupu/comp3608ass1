@@ -51,6 +51,8 @@ class Board(object):
   def __init__(self, size):
     self.size = size
     self.tokens = []
+    self.white = 2
+    self.black = 2
     # initialise the board grid with empty tokens
     for i in xrange(size):
       temp = []
@@ -80,8 +82,18 @@ class Board(object):
     changes the blank token at that position to be the colour indicated."""
     if not colour:
       self.tokens[y][x].change_colour()
+      if colour == 'B':
+        self.black = self.black + 1
+      else:
+        self.white = self.white + 1
     elif colour in 'BW':
       self.tokens[y][x].change_colour(colour)
+      if colour == 'B':
+        self.black = self.black + 1
+        self.white = self.white - 1
+      else:
+        self.white = self.white + 1
+        self.black = self.black - 1
   def get_size(self):
     return self.size
   def get_token(self, x, y):
@@ -103,6 +115,12 @@ class Board(object):
       for j in xrange(self.size):
         toks.append(self.tokens[j][i])
     return toks
+  def get_white(self):
+    """Returns count of how many white tokens there are"""
+    return self.white
+  def get_black(self):
+    """Returns count of how many black tokens there are"""
+    return self.black
 
 class Player(object):
   def __init__(self, name, colour):
@@ -347,35 +365,24 @@ class Game(object):
     other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
       # finding out who the winner is
-      # PROBABLY FASTER TO JUST KEEP A COUNT OF THE WHITE AND BLACK TOKS IN THE BOARD
-      toks = self.board.get_alltoks()
-      white = 0
-      black = 0
-      for tok in toks:
-        if tok.get_colour == 'W':
-          print 'white\n'
-          white = white + 1
-        else:
-          black = black + 1
-          print 'black\n'
+      white = self.board.get_white()
+      black = self.board.get_black()
       if white > black:
         winner = 'W'
       elif black < white:
         winner = 'B'
       else:
         winner = 'tie'
-      print 'white %s, black %s, size(toks) %s)' %(white, black,len(toks))
+      print 'white %s, black %s)' %(white, black)
       if winner == 'tie':
         print 'The game has ended! It\'s a tie =)'
       else:
         if self.get_currplayercolr == winner:
           winPlay = self.get_currplayername()
-          lossPlay = self.get_otherplayername()
         else:
-          winPlay = self.get_otherplayername()
           lossPlay = self.get_currplayername()
-        print 'The game has ended! %s wins! %s got %d points, %s got only %d\n' \
-        % (winPlay, winPlay, max(black,white), lossPlay, min(black,white))
+        print 'The game has ended! %s wins! %s got %d points as opposed to %d\n' \
+        % (winPlay, winPlay, max(black,white), min(black,white))
       return 1
     if len(valids) == 0: # curr player has no valid moves, so skips a turn
       print '%s has no valid moves this turn, so we move to the other player!\n' % self.get_currplayername()
