@@ -80,20 +80,25 @@ class Board(object):
   def update_token(self, x, y, colour=None):
     """Updates the token at (x, y) by flipping its colour. If colour is given,
     changes the blank token at that position to be the colour indicated."""
-    if not colour:
+    if not colour: # colour = none
       self.tokens[y][x].change_colour()
-      if colour == 'B':
-        self.black = self.black + 1
+    elif colour in 'BW': # colour it in
+      if self.tokens[y][x].colour == ' ':
+        print 'addin a token'
+        if colour == 'B':
+          self.black += 1
+        else:
+          self.white += 1
+      elif self.tokens[y][x].colour == 'B':
+        print 'flippin a token'
+        self.black -= 1
+        self.white += 1
       else:
-        self.white = self.white + 1
-    elif colour in 'BW':
+        print 'flippin a token'
+        self.white -= 1
+        self.black += 1
       self.tokens[y][x].change_colour(colour)
-      if colour == 'B':
-        self.black = self.black + 1
-        self.white = self.white - 1
-      else:
-        self.white = self.white + 1
-        self.black = self.black - 1
+    print "black: %d, white %d" %(self.black, self.white)
   def get_size(self):
     return self.size
   def get_token(self, x, y):
@@ -367,22 +372,23 @@ class Game(object):
       # finding out who the winner is
       white = self.board.get_white()
       black = self.board.get_black()
+      winner = ''
+      print 'white %d, black %d\n' %(white, black)
       if white > black:
+        print 'more white than black\n'
         winner = 'W'
       elif black < white:
+        print 'more black than black\n'
         winner = 'B'
       else:
-        winner = 'tie'
-      print 'white %s, black %s)' %(white, black)
-      if winner == 'tie':
-        print 'The game has ended! It\'s a tie =)'
+        print 'The game has ended! It\'s a tie =)\n'
+        return 1
+      if self.get_currplayercolr == winner:
+        winPlay = self.get_currplayername()
       else:
-        if self.get_currplayercolr == winner:
-          winPlay = self.get_currplayername()
-        else:
-          lossPlay = self.get_currplayername()
-        print 'The game has ended! %s wins! %s got %d points as opposed to %d\n' \
-        % (winPlay, winPlay, max(black,white), min(black,white))
+        lossPlay = self.get_currplayername()
+      print 'The game has ended! %s wins! %s got %d points as opposed to %d\n' \
+      % (winPlay, winPlay, max(black,white), min(black,white))
       return 1
     if len(valids) == 0: # curr player has no valid moves, so skips a turn
       print '%s has no valid moves this turn, so we move to the other player!\n' % self.get_currplayername()
