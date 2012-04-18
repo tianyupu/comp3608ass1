@@ -68,11 +68,11 @@ class Board(object):
       self.tokens.append(temp)
   def __str__(self):
     """Returns a player-friendly representation of the board that is printable."""
-    horizcoords = ' ' + ''.join([str(i) for i in xrange(self.size)]) + ' '
-    topborder = '+%s+' % ('-' * self.size)
+    horizcoords = ' ' + ' '.join([str(i) for i in xrange(self.size)]) + ' '
+    topborder = '+%s+' % ('-' * self.size * 2)
     boardgrid = [horizcoords, topborder]
     for i in xrange(self.size):
-      row = '|' + ''.join([t.get_colour() for t in self.tokens[i]]) + '|%s' % i
+      row = '|' + ' '.join([t.get_colour() for t in self.tokens[i]]) + '|%s' % i
       boardgrid.append(row)
     boardgrid.append(topborder)
     boardstr = '\n'.join(boardgrid)
@@ -138,16 +138,17 @@ class Player(object):
     return self.colour
 
 class Game(object):
-  def __init__(self, size=8, difficulty=0):
+  def __init__(self, size=8, level=0):
     """Creates a new Othello game.
 
     Arguments:
     size -- the desired size of the Othello board (default 8)
-    difficulty -- the desired difficulty of the computer opponent (default 0). This affects the depth of the search space in the mini-max algorithm etc.
+      level -- the desired difficulty of the computer opponent (default 0). This affects the depth of the search space in the mini-max algorithm etc.
     """
     self.size = size
-    self.difficulty = difficulty
+    self.level = level
     self.board = Board(size)
+    self.comp = raw_input("Which AI would you like to verse? Amy (A), Ben (B) or Cameron (C)\n")
     self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
     self.curr_player = 0
   def get_currplayername(self):
@@ -162,6 +163,15 @@ class Game(object):
     line = raw_input("Type your move in the form 'x y' (without quotes): ").strip()
     x, y = line.split()
     return int(x), int(y)
+  def comp_move(self):
+    if self.comp == 'A':
+      move = minimax(self.board, self,level)
+      make_move(move)
+    elif self.comp == 'B':
+      move = alphabeta(self.board, self, alpha, beta, level)
+      make_move(move)
+    else:
+      move = master(self.board, self,level)
   def make_move(self, x, y, moveset):
     newcolour = self.get_currplayercolr()
     self.board.update_token(x, y, newcolour)
