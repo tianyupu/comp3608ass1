@@ -106,10 +106,22 @@ class Board(object):
       return None
     return self.tokens[y][x]
   def get_adjacent(self, x, y):
-    """Returns a list of the 8 tokens surrounding the token located at (x, y).
+    """Returns a list of the 4 tokens surrounding the token located at (x, y).
     If no tokens exist because the coordinates are off the board, then one or
     more Nones will appear in the resulting list."""
     toks = [self.get_token(x,y-1), self.get_token(x,y+1), self.get_token(x-1,y), self.get_token(x+1,y)]
+    return toks
+  def get_neighbours(self, x, y):
+    """Returns a list of the 8 tokens surrounding the token located at (x, y),
+    including diagonals.
+    If no tokens exist because the coordinates are off the board, then one or
+    more Nones will appear in the resulting list."""
+    toks = []
+    for i in [x-1,x,x+1]:
+      for j in [y-1,y,y+1]:
+        if i == x and j == y:
+          continue
+        toks.append(self.get_token(i,j))
     return toks
   def get_alltoks(self):
     """Return a list of all tokens on the board as a one-dimensional list."""
@@ -141,14 +153,16 @@ class Game(object):
 
     Arguments:
     size -- the desired size of the Othello board (default 8)
-      level -- the desired difficulty of the computer opponent (default 0). This affects the depth of the search space in the mini-max algorithm etc.
+    level -- the desired difficulty of the computer opponent (default 0). 
+    This affects the depth of the search space in the mini-max algorithm etc.
     """
     self.size = size
     self.level = level
     self.board = Board(size)
-    self.comp = raw_input("Which AI would you like to verse? Amy (A), Ben (B) or Cameron (C)\n")
+    self.comp = raw_input("Which AI would you like to play against? Amy (A), Ben (B) or Cameron (C): ")
     self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
     self.curr_player = 0
+    self.moves_made = []
   def get_currplayername(self):
     return self.players[self.curr_player].get_name()
   def get_currplayercolr(self):
@@ -164,15 +178,16 @@ class Game(object):
   def comp_move(self):
     if self.comp == 'A':
       move = minimax(self.board, self,level)
-      make_move(move)
+      self.make_move(move)
     elif self.comp == 'B':
       move = alphabeta(self.board, self, alpha, beta, level)
-      make_move(move)
+      self.make_move(move)
     else:
       move = master(self.board, self,level)
   def make_move(self, x, y, moveset):
+    self.moves_made.append((x,y))
     newcolour = self.get_currplayercolr()
-    self.board.update_token(x, y, newcolour)
+    self.board.update_token(x, y, newcolour) # place a token at this new spot (x,y)
     self.curr_player = int(not self.curr_player) # switch player turn
     row, col, diag = moveset[(x, y)]
     if row:
@@ -236,9 +251,9 @@ class Game(object):
       # 3. check that on the opposite side of the blank square is either:
       # a token of your colour or a row/column of the opponents colour then your own
       if tok.get_colour() == other_col: # if the colour of the token is of the opposing side,
-        adj = self.board.get_adjacent(tok.get_x(), tok.get_y()) # get all its adjacent tokens
+        adj = self.board.get_neighbours(tok.get_x(), tok.get_y()) # get all its neighbour tokens
         for adjtoken in adj:
-          if adjtoken is not None and adjtoken.get_colour() == ' ': # if any of these adjacent tokens are blank,
+          if adjtoken is not None and adjtoken.get_colour() == ' ': # if any of these neighbour tokens are blank,
             candidates.add(adjtoken) # then it's a possible place to put our next token
     for c in candidates:
       ret = self.has_move(c, colour, other_col)
@@ -260,23 +275,29 @@ class Game(object):
     othertoks = 0
     x = tx - 1
     while x >= 0: # scan to the left of the token to find a left flank
-      currtok = self.board.get_token(x, ty)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(x, ty).get_colour()
+      if currcolour == ' ':
         break # if there's a blank space there, there's nothing to flank
-      elif currtok.get_colour() == colour and othertoks > 0:
-        left = x # set the x-coord of the leftmost flank
-      elif currtok.get_colour() == other_col:
+      elif currcolour == colour and othertoks > 0:
+        left = x # set the x-coord of the first token of our colour if we've seen other coloured tokens
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       x -= 1
     x = tx + 1
     othertoks = 0
     while x < self.board.get_size(): # scan to the right of the token to find a right flank
-      currtok = self.board.get_token(x, ty)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(x, ty).get_colour()
+      if currcolour == ' ':
         break # if there's a blank space there, there's nothing to flank
-      elif currtok.get_colour() == colour and othertoks > 0:
-        right = x # set the x-coord of the leftmost flank
-      elif currtok.get_colour() == other_col:
+      elif currcolour == colour and othertoks > 0:
+        right = x # set the x-coord of the first token of our colour if we've seen other coloured tokens
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       x += 1
     if left is None and right is None:
@@ -289,23 +310,29 @@ class Game(object):
     othertoks = 0
     y = ty - 1
     while y >= 0: # scan to the top of the token to find a top flank
-      currtok = self.board.get_token(tx, y)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(tx, y).get_colour()
+      if currcolour == ' ':
         break # if there's a blank space there, there's nothing to flank
-      elif currtok.get_colour() == colour and othertoks > 0:
-        top = y # set the y-coord of the topmost flank
-      elif currtok.get_colour() == other_col:
+      elif currcolour == colour and othertoks > 0:
+        top = y # set the y-coord of the first seen top flank
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       y -= 1
     y = ty + 1
     othertoks = 0
     while y < self.board.get_size(): # scan to the bottom of the token to find a right flank
-      currtok = self.board.get_token(tx, y)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(tx, y).get_colour()
+      if currcolour == ' ':
         break # if there's a blank space there, there's nothing to flank
-      elif currtok.get_colour() == colour and othertoks > 0:
-        bottom = y # set the y-coord of the bottom-most flank
-      elif currtok.get_colour() == other_col:
+      elif currcolour == colour and othertoks > 0:
+        bottom = y # set the y-coord of the first seen bottom flank
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       y += 1
     #if (top is None or ty-top == 1) and (bottom is None or bottom-ty == 1):
@@ -319,52 +346,64 @@ class Game(object):
     x, y = tx-1, ty-1
     coords = [None, None, None, None] # topl, topr, botl, botr
     while x >= 0 and y >= 0:
-      currtok = self.board.get_token(x, y)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(x, y).get_colour()
+      if currcolour == ' ':
         break
       #if currtok.get_colour() == colour and tx-x > 1 and ty-y > 1:
-      elif currtok.get_colour() == colour and othertoks > 0:
+      elif currcolour == colour and othertoks > 0:
         coords[0] = (x, y)
-      elif currtok.get_colour() == other_col:
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       x -= 1
       y -= 1
     x, y = tx+1, ty+1
     othertoks = 0
     while x < self.board.get_size() and y < self.board.get_size():
-      currtok = self.board.get_token(x, y)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(x, y).get_colour()
+      if currcolour == ' ':
         break
       #if currtok.get_colour() == colour and x-tx > 1 and y-ty > 1:
-      elif currtok.get_colour() == colour and othertoks > 0:
+      elif currcolour == colour and othertoks > 0:
         coords[3] = (x, y)
-      elif currtok.get_colour() == other_col:
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       x += 1
       y += 1
     x, y = tx-1, ty+1
     othertoks = 0 
     while x >= 0 and y < self.board.get_size():
-      currtok = self.board.get_token(x, y)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(x, y).get_colour()
+      if currcolour == ' ':
         break
       #if currtok.get_colour() == colour and tx-x > 1 and y-ty > 1:
-      elif currtok.get_colour() == colour and othertoks > 0:
+      elif currcolour == colour and othertoks > 0:
         coords[2] = (x, y)
-      elif currtok.get_colour() == other_col:
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       x -= 1
       y += 1
     x, y = tx+1, ty-1
     othertoks = 0
     while x < self.board.get_size() and y >= 0:
-      currtok = self.board.get_token(x, y)
-      if currtok.get_colour() == ' ':
+      currcolour = self.board.get_token(x, y).get_colour()
+      if currcolour == ' ':
         break
       #if currtok.get_colour() == colour and x-tx > 1 and ty-y > 1:
-      elif currtok.get_colour() == colour and othertoks > 0:
+      elif currcolour == colour and othertoks > 0:
         coords[1] = (x, y)
-      elif currtok.get_colour() == other_col:
+        break
+      elif currcolour == colour:
+        break
+      elif currcolour == other_col:
         othertoks += 1
       x += 1
       y -= 1
@@ -391,20 +430,14 @@ class Game(object):
       else:
         print "The game has ended! It's a tie =)"
         return 1
-      if self.get_currplayercolr() == winner:
-        winnername = self.get_currplayername()
-      else:
-        lossPlay = self.get_currplayername()
-      print 'The game has ended! %s wins! %s got %d points as opposed to %d\n' \
-      % (winPlay, winPlay, max(black,white), min(black,white))
       return 1
     if len(valids) == 0: # curr player has no valid moves, so skips a turn
-      print '%s has no valid moves this turn, so we move to the other player!\n' % self.get_currplayername()
-      self.curr_player = int(not self.curr_player)
+      print '%s has no valid moves this turn, so we move to the other player!' % self.get_currplayername()
+      self.curr_player = int(not self.curr_player) # flip the player
       return 2
     return valids
   def __str__(self):
-    gamestr = "This is a %sx%s game of Othello. It's %s's turn to move (%s).\n" \
+    gamestr = "This is a %sx%s game of Othello. It's %s's (%s) turn to move.\n" \
       % (self.size, self.size, self.get_currplayername(), self.get_currplayercolr())
     return gamestr + str(self.board)
   def run(self):
@@ -415,6 +448,7 @@ class Game(object):
       if ret == 2:
         continue
       print self
+      print '==>MOVES MADE SO FAR:', self.moves_made
       print ret
       nx, ny = self.get_move()
       while (nx, ny) not in ret:
