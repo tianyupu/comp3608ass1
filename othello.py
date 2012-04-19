@@ -42,6 +42,8 @@ class Token(object):
     if other.get_x() == self.x and other.get_y() == self.y and other.get_colour == self.colour:
       return True
     return False
+  def get_stability(self):
+    return self.stability 
   def __ne__(self, other):
     if other.get_x() != self.x or other.get_y() != self.y or other.get_colour != self.colour:
       return True
