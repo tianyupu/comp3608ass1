@@ -18,7 +18,7 @@ class Token(object):
     """Changes the colour of the token. If colour is provided, change the colour
     of the token to the one indicated. If colour is omitted, flips the colour
     of the token to the other colour.
-    
+
     Returns a 2-tuple (colour, flag) where colour indicates the colour of the
     new token and flag=0 indicates adding a new coloured token, flag=1 indicates
     updating the colour of an existing token."""
@@ -52,7 +52,7 @@ class Token(object):
       return True
     return False
   def get_stability(self):
-    return self.stability 
+    return self.stability
   def __ne__(self, other):
     if other.get_x() != self.x or other.get_y() != self.y or other.get_colour != self.colour:
       return True
@@ -153,14 +153,18 @@ class Game(object):
 
     Arguments:
     size -- the desired size of the Othello board (default 8)
-    level -- the desired difficulty of the computer opponent (default 0). 
+    level -- the desired difficulty of the computer opponent (default 0).
     This affects the depth of the search space in the mini-max algorithm etc.
     """
+    abc = {'A':'Amy','B':'Ben','C':'Cameron'}
     self.size = size
-    self.level = level
     self.board = Board(size)
-    self.comp = raw_input("Which AI would you like to play against? Amy (A), Ben (B) or Cameron (C): ")
-    self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
+    self.comp = raw_input("Which AI would you like to play against? Amy (A), Ben (B), Cameron (C), or human (H): \n")
+    self.level = int(raw_input("Which level would you like to play at: 1, 2 or 3?\n")) + 2 # makes base level depth of three
+    if self.comp == 'H':
+      self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
+    else:
+      self.players = [Player(raw_input("You are black, please type your name\n"),'B'), abc[self.comp]]
     self.curr_player = 0
     self.moves_made = []
   def get_currplayername(self):
@@ -177,13 +181,14 @@ class Game(object):
     return int(x), int(y)
   def comp_move(self):
     if self.comp == 'A':
-      move = minimax(self.board, self,level)
+      move = minimax(self.board, self, level)
       self.make_move(move)
     elif self.comp == 'B':
       move = alphabeta(self.board, self, alpha, beta, level)
       self.make_move(move)
     else:
       move = master(self.board, self,level)
+    return move
   def make_move(self, x, y, moveset):
     self.moves_made.append((x,y))
     newcolour = self.get_currplayercolr()
@@ -376,7 +381,7 @@ class Game(object):
       x += 1
       y += 1
     x, y = tx-1, ty+1
-    othertoks = 0 
+    othertoks = 0
     while x >= 0 and y < self.board.get_size():
       currcolour = self.board.get_token(x, y).get_colour()
       if currcolour == ' ':
@@ -416,6 +421,8 @@ class Game(object):
     valids = self.valid_moves(self.get_currplayercolr())
     other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
+      # print out final game position
+      print self
       # finding out who the winner is
       nwhite = self.board.get_white()
       nblack = self.board.get_black()
@@ -448,12 +455,16 @@ class Game(object):
       if ret == 2:
         continue
       print self
-      print '==>MOVES MADE SO FAR:', self.moves_made
+      print '==> MOVES MADE SO FAR:', self.moves_made
+      print 'White: %d, Black: %d' % (self.board.get_white(), self.board.get_black())
       print ret
-      nx, ny = self.get_move()
-      while (nx, ny) not in ret:
-        print "The move you entered was invalid. Please try again!"
+      if self.curr_player == 'B' or self.comp == 'H':
         nx, ny = self.get_move()
+        while (nx, ny) not in ret:
+          print "The move you entered was invalid. Please try again!"
+          nx, ny = self.get_move()
+      elif self.comp == 'A':
+        nx, ny = comp_move(self)
       self.make_move(nx, ny, ret)
 
 if __name__ == '__main__':
