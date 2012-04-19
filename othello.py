@@ -17,14 +17,23 @@ class Token(object):
   def change_colour(self, colour=None):
     """Changes the colour of the token. If colour is provided, change the colour
     of the token to the one indicated. If colour is omitted, flips the colour
-    of the token to the other colour."""
-    if not colour:
+    of the token to the other colour.
+    
+    Returns a 2-tuple (colour, flag) where colour indicates the colour of the
+    new token and flag=0 indicates adding a new coloured token, flag=1 indicates
+    updating the colour of an existing token."""
+    if self.get_colour() == ' ':
+      flag = 0
+    elif self.get_colour() in 'BW':
+      flag = 1
+    if not colour: # if no colour provided, just flip the colour
       if self.colour == 'B':
         self.colour = 'W'
-      else:
+      elif self.colour == 'W':
         self.colour = 'B'
     elif colour in 'BW':
       self.colour = colour
+    return (self.colour, flag)
   def stabilise(self, st): # not used currently
     """Changes the stability of the token to st."""
     self.stability = st
@@ -51,8 +60,7 @@ class Board(object):
   def __init__(self, size):
     self.size = size
     self.tokens = []
-    self.white = 2
-    self.black = 2
+    self.tokencount = {'W': 2, 'B': 2}
     # initialise the board grid with empty tokens
     for i in xrange(size):
       temp = []
@@ -80,25 +88,13 @@ class Board(object):
   def update_token(self, x, y, colour=None):
     """Updates the token at (x, y) by flipping its colour. If colour is given,
     changes the blank token at that position to be the colour indicated."""
-    if not colour: # colour = none
-      self.tokens[y][x].change_colour()
-    elif colour in 'BW': # colour it in
-      if self.tokens[y][x].colour == ' ':
-        print 'addin a token'
-        if colour == 'B':
-          self.black += 1
-        else:
-          self.white += 1
-      elif self.tokens[y][x].colour == 'B':
-        print 'flippin a token'
-        self.black -= 1
-        self.white += 1
-      else:
-        print 'flippin a token'
-        self.white -= 1
-        self.black += 1
-      self.tokens[y][x].change_colour(colour)
-    print "black: %d, white %d" %(self.black, self.white)
+    newcolour, ret = self.tokens[y][x].change_colour(colour)
+    if ret == 0: # adding a token (ie. updating a blank with a colour)
+      self.tokencount[newcolour] += 1
+    elif ret == 1:
+      self.tokencount[newcolour] += 1
+      oldcolour = 'W' if newcolour == 'B' else 'B'
+      self.tokencount[oldcolour] -= 1
   def get_size(self):
     return self.size
   def get_token(self, x, y):
@@ -121,11 +117,11 @@ class Board(object):
         toks.append(self.tokens[j][i])
     return toks
   def get_white(self):
-    """Returns count of how many white tokens there are"""
-    return self.white
+    """Returns the number of white tokens on the board."""
+    return self.tokencount['W']
   def get_black(self):
-    """Returns count of how many black tokens there are"""
-    return self.black
+    """Returns the number of black tokens on the board."""
+    return self.tokencount['B']
 
 class Player(object):
   def __init__(self, name, colour):
@@ -380,21 +376,21 @@ class Game(object):
     other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
       # finding out who the winner is
-      white = self.board.get_white()
-      black = self.board.get_black()
+      nwhite = self.board.get_white()
+      nblack = self.board.get_black()
       winner = ''
-      print 'white %d, black %d\n' %(white, black)
-      if white > black:
-        print 'more white than black\n'
+      print 'White: %d, Black: %d' % (nwhite, nblack)
+      if nwhite > nblack:
+        print 'White wins!'
         winner = 'W'
-      elif black < white:
-        print 'more black than black\n'
+      elif nblack > nwhite:
+        print 'Black wins!'
         winner = 'B'
       else:
-        print 'The game has ended! It\'s a tie =)\n'
+        print "The game has ended! It's a tie =)"
         return 1
-      if self.get_currplayercolr == winner:
-        winPlay = self.get_currplayername()
+      if self.get_currplayercolr() == winner:
+        winnername = self.get_currplayername()
       else:
         lossPlay = self.get_currplayername()
       print 'The game has ended! %s wins! %s got %d points as opposed to %d\n' \
