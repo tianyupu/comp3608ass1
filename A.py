@@ -12,8 +12,8 @@ def minimax(game, depth=3,colour='W'):
     colour = 'W'
     # need to explore deeper nodes
     if level <= depth:
-      value = lost
-      best = [0, [0,0]]
+      value = won
+      best = [0, 0]
       for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
@@ -32,13 +32,14 @@ def minimax(game, depth=3,colour='W'):
     level += 1
     colour = 'B'
     if level <= depth:
-      value = won
-      best = [0, [0,0]]
+      value = lost
+      best = [0, 0]
       for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
         temp = max_val(new, level)
+        print "value, temp, move:", value, temp, move
         if value < temp[0]:
           value = temp[0]
           best = move[1]
@@ -71,11 +72,13 @@ def minimax(game, depth=3,colour='W'):
   moves = game.valid_moves('W')[1]
   print moves[0]
   best = [0,moves[0]]
+  print best
   for move in moves:
     moveset = game.valid_moves(colour)[0]
     new = game.copy()
     new.make_move(move[0],move[1], moveset)
     val = min_val(new, level)
+    print ">>>VAL>>>>", val
     level = 1
     if val[0] > best[0]:
       best = [val[0],val[1]]

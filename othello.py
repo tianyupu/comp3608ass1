@@ -1,8 +1,10 @@
 #!/usr/bin/python
+
 import othello
 import A
 import B
 import C
+import tree
 
 class Token(object):
   def __init__(self, x, y, colour=' ', stability=1):
