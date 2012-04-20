@@ -25,17 +25,17 @@ def master(game):
       moves = game.valid_moves(colour).keys()#[1]
       if len(moves)==0: # if we're at a leaf
         best = "pass"
-        value = eval(new,'B')
+        value = min_val(game, level)
       elif len(moves) == 1:
         best = moves[0]
-        moveset = game.valid_moves(colour)#[0]
         new = game.copy()
+        moveset = new.valid_moves(colour)#[0]
         new.make_move(moves[0][0],moves[0][1], moveset)
-        value = eval(game,'B')
+        value = min_val(new, level)
       else:
         for move in moves:
-          moveset = game.valid_moves(colour)#[0]
           new = game.copy()
+          moveset = new.valid_moves(colour)#[0]
           new.make_move(move[0],move[1], moveset)
           temp = min_val(new, level)
           if temp[0] > value:
@@ -57,17 +57,17 @@ def master(game):
       moves = game.valid_moves(colour).keys()#[1]
       if len(moves)==0: # if we're at a leaf
         best = "pass"
-        value = eval(new,'B')
+        value = max_val(game, level)
       elif len(moves) == 1:
         best = moves[0]
-        moveset = game.valid_moves(colour)#[0]
         new = game.copy()
+        moveset = new.valid_moves(colour)#[0]
         new.make_move(moves[0][0],moves[0][1], moveset)
-        value = eval(game,'B')
+        value = max_val(new, level)
       else:
         for move in moves:
-          moveset = game.valid_moves(colour)#[0]
           new = game.copy()
+          moveset = new.valid_moves(colour)#[0]
           new.make_move(move[0],move[1], moveset)
           temp = max_val(new, level) # the optimal move and value that computer will make
           if temp[0] < value: # if we have a smaller heuristic option choose it
