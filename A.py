@@ -1,8 +1,8 @@
 # Minimax Algorithm
 import util
-import random
 won = 10000
 lost = -10000
+import copy
 
 def minimax(game, depth=3,colour='W'):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3
@@ -30,13 +30,19 @@ def minimax(game, depth=3,colour='W'):
       return won #largest possible heuristic therefore will never be chosen
 
   def eval1(game, x, y, which):
-    new = game.make_move(move[0],move[1],which)
+    moveset = game.valid_moves(which)[0]
+    new = copy.copy(game)
+    new = game.make_move(move[0],move[1], moveset)
+    print type(game), type(new)
+    print new.board
     if which=="white":
       return new.board.get_white()
-    else: return new.board.get_black()
+    else:
+      return new.board.get_black()
 
   def eval2(move, colour):
-    new = game.make_move(move[0],move[1],colour)
+    moveset = game.valid_moves(which)[0]
+    new = game.make_move(move[0],move[1], moveset)
     heur = 0
     # for each token multiply it by stability and add them up
     toks = new.board.get_alltoks()

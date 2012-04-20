@@ -172,6 +172,8 @@ class Game(object):
       self.players = [Player(raw_input("You are black, please type your name\n"),'B'), Player(abc[self.comp], 'W')]
     self.curr_player = 0
     self.moves_made = []
+  def __copy__(self):
+    return Game(self.size, self.level)
   def get_currplayername(self):
     return self.players[self.curr_player].get_name()
   def get_currplayercolr(self):

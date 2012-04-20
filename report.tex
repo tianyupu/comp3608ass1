@@ -20,7 +20,7 @@
 
 \section{Implementation of Strategies}
 \subsection{Heuristic}
-The game of Othello is complex [INSERT STATISTIC AND REFERENCE]. We felt that each strategy didn't differ sufficiently to warrant a seperate evalutation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows [INSERT REFERENCE]:
+The game of Othello is complex ~\cite{post}. We felt that each strategy didn't differ sufficiently to warrant a seperate evalutation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows [INSERT REFERENCE]:
 \begin{enumerate}
 \item \emph{Number of tokens} Obviously as the aim of the game is to have the most tokens, this is a good basic estimate of who is winning
 \item \emph{Stability} Certain pieces are a lot easier to 'flip' than others. In particular corners are very stable and cannot be flipped. Pieces protruding from corners also are more stable.
@@ -43,4 +43,6 @@ Where f() is a function of the stability of each piece. f() weights corner piece
 \subsection{Strategy A}
 \subsection{Strategy B}
 \subsection{Strategy C}
+\bibliographystyle{plainnat}
+\bibliography{bib}
 \end{document}
