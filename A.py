@@ -10,13 +10,23 @@ def minimax(game, depth=3,colour='W'):
   def max_val(game, colour, level):
     level += 1
     othercol = 'W' if colour == 'B' else 'B'
+    # need to explore deeper nodes
     if level <= depth:
       value = lost
       for move in game.valid_moves('B')[1]:
-        value = max(value,min_val(eval1(move,colour)[0]), level)
+        moveset = game.valid_moves(colour)[0]
+        new = game.copy()
+        print "before move", new
+        new.make_move(move[0],move[1], moveset)
+        print "now made move", new
+        temp = min_val(new, othercol, level)
+        if value < temp:
+          value = temp
+          best = move
       return value
     else:
-      return lost #smallest possible heuristic therefore will never be chosen
+      value = eval1(game, 'B')
+      return value #smallest possible heuristic therefore will never be chosen
 
   def min_val(game, colour, level):
     level += 1
@@ -24,21 +34,24 @@ def minimax(game, depth=3,colour='W'):
     if level <= depth:
       value = won
       for move in game.valid_moves('W')[1]:
-        value = min(value,max_val(eval1(game, move[0], move[1],othercol)[1]), level)
+        moveset = game.valid_moves(colour)[0]
+        new = game.copy()
+        print "before move", new
+        new.make_move(move[0],move[1], moveset)
+        print "now made move", new
+        temp = max_val(new, othercol, level)
+        if value < temp:
+          value = temp
+          best = move
       return value
     else:
       return won #largest possible heuristic therefore will never be chosen
 
-  def eval1(game, x, y, which):
-    moveset = game.valid_moves(which)[0]
-    new = copy.copy(game)
-    new = game.make_move(move[0],move[1], moveset)
-    print type(game), type(new)
-    print new.board
-    if which=="white":
-      return new.board.get_white()
+  def eval1(game, colour):
+    if which=="colour":
+      return game.board.get_white()
     else:
-      return new.board.get_black()
+      return game.board.get_black()
 
   def eval2(move, colour):
     moveset = game.valid_moves(which)[0]
