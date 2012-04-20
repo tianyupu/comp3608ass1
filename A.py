@@ -4,7 +4,7 @@ won = 10000
 lost = -10000
 import copy
 
-def minimax(game, depth=3,colour='W'):
+def minimax(game, depth=3):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3
   Colour is the colour the computer is playing"""
   def max_val(game, level):
@@ -98,7 +98,7 @@ def minimax(game, depth=3,colour='W'):
   best = [0,moves[0]]
   print best
   for move in moves:
-    moveset = game.valid_moves(colour)[0]
+    moveset = game.valid_moves('W')[0]
     new = game.copy()
     new.make_move(move[0],move[1], moveset)
     val = min_val(new, level)
