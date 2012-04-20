@@ -1,4 +1,8 @@
 #!/usr/bin/python
+import othello
+import A
+import B
+import C
 
 class Token(object):
   def __init__(self, x, y, colour=' ', stability=1):
@@ -158,13 +162,14 @@ class Game(object):
     """
     abc = {'A':'Amy','B':'Ben','C':'Cameron'}
     self.size = size
+    self.level = level
     self.board = Board(size)
     self.comp = raw_input("Which AI would you like to play against? Amy (A), Ben (B), Cameron (C), or human (H): \n")
-    self.level = int(raw_input("Which level would you like to play at: 1, 2 or 3?\n")) + 2 # makes base level depth of three
     if self.comp == 'H':
       self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
     else:
-      self.players = [Player(raw_input("You are black, please type your name\n"),'B'), abc[self.comp]]
+      self.level = int(raw_input("Which level would you like to play at: 1, 2 or 3?\n")) + 2 # makes base level depth of three
+      self.players = [Player(raw_input("You are black, please type your name\n"),'B'), Player(abc[self.comp], 'W')]
     self.curr_player = 0
     self.moves_made = []
   def get_currplayername(self):
@@ -181,7 +186,7 @@ class Game(object):
     return int(x), int(y)
   def comp_move(self):
     if self.comp == 'A':
-      move = minimax(self.board, self, level)
+      move = A.minimax(self, self.level,'W')
       self.make_move(move)
     elif self.comp == 'B':
       move = alphabeta(self.board, self, alpha, beta, level)
@@ -247,6 +252,7 @@ class Game(object):
           ny -= 1
   def valid_moves(self, colour):
     moves = {}
+    myMoves = []
     candidates = set()
     other_col = 'W' if colour == 'B' else 'B'
     for tok in self.board.get_alltoks():
@@ -265,7 +271,8 @@ class Game(object):
       if ret:
         cx, cy = c.get_x(), c.get_y()
         moves[(cx,cy)] = ret
-    return moves
+        myMoves.append([cx,cy])
+    return [moves,myMoves]
   def has_move(self, token, colour, other_col):
     row = self.check_row(token, colour, other_col)
     col = self.check_col(token, colour, other_col)
@@ -418,8 +425,8 @@ class Game(object):
   def premove(self):
     # check if the game has finished:
     # if there are no more possible moves by either player (generally, no more empty squares)
-    valids = self.valid_moves(self.get_currplayercolr())
-    other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
+    valids = self.valid_moves(self.get_currplayercolr())[0]
+    other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')[0]
     if len(valids) == 0 and len(other_valids) == 0:
       # print out final game position
       print self
@@ -458,13 +465,13 @@ class Game(object):
       print '==> MOVES MADE SO FAR:', self.moves_made
       print 'White: %d, Black: %d' % (self.board.get_white(), self.board.get_black())
       print ret
-      if self.curr_player == 'B' or self.comp == 'H':
+      if self.get_currplayercolr() == 'B' or self.comp == 'H':
         nx, ny = self.get_move()
         while (nx, ny) not in ret:
           print "The move you entered was invalid. Please try again!"
           nx, ny = self.get_move()
       elif self.comp == 'A':
-        nx, ny = comp_move(self)
+        nx, ny = self.comp_move()
       self.make_move(nx, ny, ret)
 
 if __name__ == '__main__':
