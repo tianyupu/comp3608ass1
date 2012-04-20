@@ -172,8 +172,9 @@ class Game(object):
       self.players = [Player(raw_input("You are black, please type your name\n"),'B'), Player(abc[self.comp], 'W')]
     self.curr_player = 0
     self.moves_made = []
-  def __copy__(self):
-    return Game(self.size, self.level)
+  def copy(self):
+    import copy
+    return copy.deepcopy(self)
   def get_currplayername(self):
     return self.players[self.curr_player].get_name()
   def get_currplayercolr(self):
@@ -254,7 +255,6 @@ class Game(object):
           ny -= 1
   def valid_moves(self, colour):
     moves = {}
-    myMoves = []
     candidates = set()
     other_col = 'W' if colour == 'B' else 'B'
     for tok in self.board.get_alltoks():
@@ -273,8 +273,7 @@ class Game(object):
       if ret:
         cx, cy = c.get_x(), c.get_y()
         moves[(cx,cy)] = ret
-        myMoves.append([cx,cy])
-    return [moves,myMoves]
+    return moves, moves.keys()
   def has_move(self, token, colour, other_col):
     row = self.check_row(token, colour, other_col)
     col = self.check_col(token, colour, other_col)
