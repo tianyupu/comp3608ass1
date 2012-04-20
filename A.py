@@ -15,15 +15,26 @@ def minimax(game, depth=3,colour='W'):
     if level <= depth:
       value = lost # should never be chosen
       best = [0, 0] # just a dummy move
-      for move in game.valid_moves(colour)[1]:
+      moves = game.valid_moves(colour)[1]
+      if len(moves)==0: # if we're at a leaf
+        best = "pass"
+        value = eval(new,'B')
+      elif len(moves) == 1:
+        best = moves[0]
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
-        temp = min_val(new, level)
-        if temp[0] > value:
-          value = temp[0]
-          best = move
-      return [value, best]
+        value = eval(game,'B')
+      else:
+        for move in moves:
+          moveset = game.valid_moves(colour)[0]
+          new = game.copy()
+          new.make_move(move[0],move[1], moveset)
+          temp = min_val(new, level)
+          if temp[0] > value:
+            value = temp[0]
+            best = move
+        return [value, best]
     else:
       value = eval1(game, 'B')
       best = [0,0] # just need a dummy value
@@ -36,15 +47,26 @@ def minimax(game, depth=3,colour='W'):
     if level <= depth:
       value = won # will never be chosen as we are looking for the min
       best = [0, 0] # just a dummy move
-      for move in game.valid_moves(colour)[1]:
+      moves = game.valid_moves(colour)[1]
+      if len(moves)==0: # if we're at a leaf
+        best = "pass"
+        value = eval(new,'B')
+      elif len(moves) == 1:
+        best = moves[0]
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
-        temp = max_val(new, level) # the optimal move and value that computer will make
-        print "value, temp, move:", value, temp, move
-        if temp[0] < value: # if we have a smaller heuristic option choose it
-          value = temp[0]
-          best = move
+        value = eval(game,'B')
+      else:
+        for move in moves:
+          moveset = game.valid_moves(colour)[0]
+          new = game.copy()
+          new.make_move(move[0],move[1], moveset)
+          temp = max_val(new, level) # the optimal move and value that computer will make
+          print "value, temp, move:", value, temp, move
+          if temp[0] < value: # if we have a smaller heuristic option choose it
+            value = temp[0]
+            best = move
       return [value, best]
     else:
       value = eval1(game, 'B')
@@ -83,6 +105,6 @@ def minimax(game, depth=3,colour='W'):
     print ">>>VAL>>>>", val
     level = 1
     if val[0] > best[0]:
-      best = [val[0],val[1]]
+      best = [val[0],move]
     print "aww yeah best is", best
   return best[1]
