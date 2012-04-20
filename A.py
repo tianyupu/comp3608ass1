@@ -8,20 +8,21 @@ def minimax(game, depth=3,colour='W'):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3
   Colour is the colour the computer is playing"""
   def max_val(game, level):
+    """ Optimal choice for computer. Returns the move that the computer should make in order to maximise its heuristic value """
     level += 1
     colour = 'W'
     # need to explore deeper nodes
     if level <= depth:
-      value = won
-      best = [0, 0]
+      value = lost # should never be chosen
+      best = [0, 0] # just a dummy move
       for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
         temp = min_val(new, level)
-        if value < temp[0]:
+        if temp[0] > value:
           value = temp[0]
-          best = move[1]
+          best = move
       return [value, best]
     else:
       value = eval1(game, 'B')
@@ -29,20 +30,21 @@ def minimax(game, depth=3,colour='W'):
       return [value, best] # smallest possible heuristic therefore will never be chosen
 
   def min_val(game, level):
+    """ Optimal choice for opponent. Returns the move that the opponent should make in order to minimise the computers heuristic """
     level += 1
     colour = 'B'
     if level <= depth:
-      value = lost
-      best = [0, 0]
+      value = won # will never be chosen as we are looking for the min
+      best = [0, 0] # just a dummy move
       for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
-        temp = max_val(new, level)
+        temp = max_val(new, level) # the optimal move and value that computer will make
         print "value, temp, move:", value, temp, move
-        if value < temp[0]:
+        if temp[0] < value: # if we have a smaller heuristic option choose it
           value = temp[0]
-          best = move[1]
+          best = move
       return [value, best]
     else:
       value = eval1(game, 'B')
