@@ -467,7 +467,7 @@ class Game(object):
       print self
       print '==> MOVES MADE SO FAR:', self.moves_made
       print 'White: %d, Black: %d' % (self.board.get_white(), self.board.get_black())
-      print ret
+      print 'Your valid moves are:', self.valid_moves(self.get_currplayercolr())[1]
       if self.get_currplayercolr() == 'B' or self.comp == 'H':
         nx, ny = self.get_move()
         while (nx, ny) not in ret:

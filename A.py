@@ -63,7 +63,6 @@ def minimax(game, depth=3):
           new = game.copy()
           new.make_move(move[0],move[1], moveset)
           temp = max_val(new, level) # the optimal move and value that computer will make
-          print "value, temp, move:", value, temp, move
           if temp[0] < value: # if we have a smaller heuristic option choose it
             value = temp[0]
             best = move
@@ -94,17 +93,14 @@ def minimax(game, depth=3):
   # body of minimax
   level = 1
   moves = game.valid_moves('W')[1]
-  print moves[0]
   best = [0,moves[0]]
-  print best
   for move in moves:
     moveset = game.valid_moves('W')[0]
     new = game.copy()
     new.make_move(move[0],move[1], moveset)
     val = min_val(new, level)
-    print ">>>VAL>>>>", val
     level = 1
     if val[0] > best[0]:
       best = [val[0],move]
-    print "aww yeah best is", best
+  print "Aww yeah I know which move is best I played", best
   return best[1]
