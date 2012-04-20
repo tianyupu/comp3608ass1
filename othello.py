@@ -166,12 +166,18 @@ class Game(object):
     self.size = size
     self.level = level
     self.board = Board(size)
-    self.comp = raw_input("Which AI would you like to play against? Amy (A), Ben (B), Cameron (C), or human (H): \n")
+    char_select = raw_input("Which AI would you like to play against? Amy (A), Ben (B), Cameron (C), or human (H): ").strip()
+    while char_select not in 'ABCH':
+      char_select = raw_input("Please enter A, B, C or H: ").strip()
+    self.comp = char_select
     if self.comp == 'H':
       self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
     else:
-      self.level = int(raw_input("Which level would you like to play at: 1, 2 or 3?\n")) + 2 # makes base level depth of three
-      self.players = [Player(raw_input("You are black, please type your name\n"),'B'), Player(abc[self.comp], 'W')]
+      lvl = raw_input("Which level would you like to play at: 1, 2 or 3? ").strip()
+      while lvl not in '123':
+        lvl = raw_input("Please enter 1, 2 or 3: ").strip()
+      self.level = int(lvl) + 2 # makes base level depth of three
+      self.players = [Player(raw_input("You are black, please type your name: "),'B'), Player(abc[self.comp], 'W')]
     self.curr_player = 0
     self.moves_made = []
   def copy(self):
@@ -187,7 +193,13 @@ class Game(object):
     Assume well-formed input for now.
     """
     line = raw_input("Type your move in the form 'x y' (without quotes): ").strip()
-    x, y = line.split()
+    fields = line.split()
+    while len(fields) != 2:
+      for f in fields:
+        if not f.isdigit():
+          continue
+      line = raw_input("Type your move in the form 'x y' (without quotes): ").strip()
+      fields = line.split()
     return int(x), int(y)
   def comp_move(self):
     if self.comp == 'A':
