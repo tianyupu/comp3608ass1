@@ -5,11 +5,13 @@
 # 15% chance of the second best
 # 5% chance of the last one
 import random
+won = 10000
+lost = -10000
 from Queue import PriorityQueue
 prob1 = .8
 prob2 = .15
 
-def minimax(game, depth=3):
+def master(game, depth=3):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3
   Colour is the colour the computer is playing"""
   def max_val(game, level):
@@ -113,20 +115,20 @@ def minimax(game, depth=3):
       return other
   # in this case we store the possible moves in a priority queue (implemented as a heap) Note there is no real optimiisation to this strategy if there are less than 3 moves
   else:
-    MyMoves = PriorityQueue()
-  for move in moves:
-    moveset = game.valid_moves('W')[0]
-    new = game.copy()
-    new.make_move(move[0],move[1], moveset)
-    val = min_val(new, level)
-    level = 1
-    pq.put(1./val[0],move)
-  rand = random.rand()
-  best = pq.get()
-  if rand > .8:
+    pq = PriorityQueue()
+    for move in moves:
+      moveset = game.valid_moves('W')[0]
+      new = game.copy()
+      new.make_move(move[0],move[1], moveset)
+      val = min_val(new, level)
+      level = 1
+      pq.put(move,-val[0])
+    rand = random.random()
     best = pq.get()
-    if rand > .95:
+    if rand > .8:
       best = pq.get()
-  return best
-  print "Aww yeah I know which move is best I played: ", best
-  return best[1]
+      if rand > .95:
+        best = pq.get()
+    return best
+    print "Aww yeah I know which move is best I played: ", best
+    return best[1]

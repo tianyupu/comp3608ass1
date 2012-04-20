@@ -206,10 +206,10 @@ class Game(object):
       move = A.minimax(self, self.level)
 #      self.make_move(move[0],move[1],self.premove())
     elif self.comp == 'B':
-      move = alphabeta(self.board, self, alpha, beta, level)
+      move = B.alphabeta(self.board, self, alpha, beta, self.level)
 #      self.make_move(move)
     else:
-      move = master(self, level)
+      move = C.master(self, self.level)
     return move
   def make_move(self, x, y, moveset):
     self.moves_made.append((x,y))
@@ -485,7 +485,7 @@ class Game(object):
         while (nx, ny) not in ret:
           print "The move you entered was invalid. Please try again!"
           nx, ny = self.get_move()
-      elif self.comp == 'A':
+      elif self.comp in 'ABC':
         nx, ny = self.comp_move()
       self.make_move(nx, ny, ret)
 
