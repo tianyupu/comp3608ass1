@@ -18,13 +18,15 @@ def minimax(game):
       moves = game.valid_moves(colour).keys()#[1]
       if len(moves)==0: # if we're at a leaf
         best = "pass"
-        value = eval(new,'B')
+        value = min_val(game, level)
+        #value = eval(new,'B')
       elif len(moves) == 1:
         best = moves[0]
         moveset = game.valid_moves(colour)#[0]
         new = game.copy()
         new.make_move(moves[0][0],moves[0][1], moveset)
-        value = eval(game,'B')
+        value = min_val(new, level)
+        #value = eval(game,'B')
       else:
         for move in moves:
           moveset = game.valid_moves(colour)#[0]
@@ -50,13 +52,15 @@ def minimax(game):
       moves = game.valid_moves(colour).keys()#[1]
       if len(moves)==0: # if we're at a leaf
         best = "pass"
-        value = eval(new,'B')
+        value = max_val(game, level)
+        #value = eval(new,'B')
       elif len(moves) == 1:
         best = moves[0]
-        moveset = game.valid_moves(colour)#[0]
         new = game.copy()
+        moveset = new.valid_moves(colour)#[0]
         new.make_move(moves[0][0],moves[0][1], moveset)
-        value = eval(game,'B')
+        value = max_val(new, level)
+        #value = eval(game,'B')
       else:
         for move in moves:
           moveset = game.valid_moves(colour)#[0]
@@ -100,12 +104,16 @@ def minimax(game):
     return moves[0]
   else:
     best = [0,moves[0]]
+    # make every possible move
     for move in moves:
-      moveset = game.valid_moves('W')#[0]
       new = game.copy()
+      moveset = new.valid_moves('W')#[0]
       new.make_move(move[0],move[1], moveset)
+      # the opponents turn so they minimise the heuristic
       val = min_val(new, level)
+      # so that the next move is also calculated to the same depth
       level = 1
+      # choose the greatest heuristic of every possible move
       if val[0] > best[0]:
         best = [val[0],move]
     print "Aww yeah I know which move is best I played", best
