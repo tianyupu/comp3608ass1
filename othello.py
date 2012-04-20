@@ -20,6 +20,11 @@ class Token(object):
     self.y = y
     self.colour = colour
     self.stability = 1 # weighting of stability that the token currently has
+    if x == 0 or x == 7:
+      self.stability += 1
+    if y == 0 or y == 7:
+      self.stability += 1
+
   def change_colour(self, colour=None):
     """Changes the colour of the token. If colour is provided, change the colour
     of the token to the one indicated. If colour is omitted, flips the colour
@@ -40,9 +45,6 @@ class Token(object):
     elif colour in 'BW':
       self.colour = colour
     return (self.colour, flag)
-  def stabilise(self, st): # not used currently
-    """Changes the stability of the token to st."""
-    self.stability = st
   def __str__(self):
     return self.colour
   def __repr__(self):
@@ -198,7 +200,6 @@ class Game(object):
   def comp_move(self):
     if self.comp == 'A':
       move = A.minimax(self)
-#      self.make_move(move[0],move[1],self.premove())
     elif self.comp == 'B':
       vals = {}
       nodes = []
@@ -276,6 +277,7 @@ class Game(object):
           self.board.update_token(nx, ny, newcolour)
           nx += 1
           ny -= 1
+
   def valid_moves(self, colour):
     moves = {}
     candidates = set()

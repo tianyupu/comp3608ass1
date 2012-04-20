@@ -43,7 +43,7 @@ def master(game):
             best = move
         return [value, best]
     else:
-      value = eval1(game, 'B')
+      value = eval2(game, 'B')
       best = [0,0] # just need a dummy value
       return [value, best] # smallest possible heuristic therefore will never be chosen
 
@@ -75,7 +75,7 @@ def master(game):
             best = move
       return [value, best]
     else:
-      value = eval1(game, 'B')
+      value = eval2(game, 'B')
       best = [0,0] # just need a dummy value
       return [value, best] #largest possible heuristic therefore will never be chosen
 
@@ -85,17 +85,15 @@ def master(game):
     else:
       return game.board.get_black()
 
-  def eval2(move, colour):
-    moveset = game.valid_moves(which)#[0]
-    new = game.make_move(move[0],move[1], moveset)
+  def eval2(game, colour):
     heur = 0
     # for each token multiply it by stability and add them up
-    toks = new.board.get_alltoks()
+    toks = game.board.get_alltoks()
     for tok in toks:
       if tok.get_colour() == colour:
-        heur += tok.stability()
+        heur += tok.get_stability()
     # add twice the number of possible moves
-    heur += 2*len(new.valid_moves)
+    heur += 2*len(new.valid_moves(colour))
 
   # body of minimax
   level = 1
