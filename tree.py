@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 class Node(object):
-  def __init__(self, game, depth, colour, x, y, moveset):
+  def __init__(self, game, colour, x, y, moveset):
     """Creates a node containing the state of the game if the move of (x, y)
     with colour 'colour' had been made, then generates all the children --
     all possible moves the opposing player could have made in response to this
     particular move."""
     self.game = game.copy()
     self.game.make_move(x, y, moveset) # makes the move
-    self.depth = depth
     self.colour = colour
     self.other_col = 'B' if colour == 'W' else 'W'
     self.children = []
@@ -16,8 +15,8 @@ class Node(object):
     for move in moves:
       new = self.game.copy()
       nx, ny = move[0], move[1]
-      new.make_move(nx, ny, move)
-      self.children.append(new)
+      newnode = Node(new, self.other_col, nx, ny, move)
+      self.children.append(newnode)
   def eval_1(self, colour):
     if colour == "W":
       return self.game.board.get_white()
@@ -38,8 +37,6 @@ class Node(object):
     return self.game
   def get_children(self):
     return self.children
-  def get_depth(self):
-    return self.depth
   def get_colour(self):
     return self.colour
 
