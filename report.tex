@@ -24,11 +24,11 @@
 
 \section{Introduction and Background}
 \subsection{Othello: The Game}
-Othello (also commonly known as Reversi), is a two-player strategy board game played on an 8x8 board. 
+Othello (also commonly known as Reversi), is a two-player strategy board game played on an 8x8 board.
 The game begins with four pieces in the centre, two for each player's colour. Both players take turns
 to place a piece in their colour onto the board, flipping over all the opponent's pieces that are caught
-or `flanked' between the new piece and another of the player's colour. The move is only valid if at 
-least one token was flanked in any direction. The game ends when the board is filled or when there are
+or `flanked' between the new piece and another of the player's colour. The move is only valid if at
+least one token was flanked in any direction. The game ends when the board is filled and/or when there are
 no more possible moves for either player.
 
 \subsection{Interpretation of the Rules}
@@ -39,7 +39,8 @@ tournaments. This section outlines the version of the rules that was used to cre
  surrounding a piece of the opponent's colour.
  \item You can flip the opponent's pieces that are directly flanked by your new piece (the piece just
  put down) and the nearest piece of your colour in any of the eight directions.
- \item
+ \item A move is only valid if you flip/ or flank at least one of your opponents pieces.
+ \item A player may not pass unless they have no more valid moves: in this case they automatically pass.
 \end{enumerate}
 
 \section{Implementation of Strategies}
@@ -47,17 +48,17 @@ tournaments. This section outlines the version of the rules that was used to cre
 The game of Othello is complex ~\cite{post}. We felt that each strategy didn't differ sufficiently to warrant a seperate evaluation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows ~\cite{strategy}:
 \begin{enumerate}
 \item \emph{Number of tokens} Obviously as the aim of the game is to have the most tokens, this is a good basic estimate of who is winning at any one point in time.
-\item \emph{Stability} Certain pieces are a lot easier to 'flip' than others. In particular corners are very stable and cannot be flipped. Pieces protruding from corners also are more stable.
+\item \emph{Stability} Certain pieces are a lot easier to `flank' than others. In particular corners are very stable and cannot be flipped. Pieces protruding from corners are also more stable.
 \item \emph{Mobility} Having more moves available means you are better positioned strategically and less constricted.
 \end{enumerate}
-Each of these methods has its own shortcomings and advantages. We therefore chose to implement a heuristic that weighted each method appropriately, thus creating a much `smarter' AI.
-Our heuristic can be represented thus:
+Each of these methods has its own shortcomings and advantages. We chose to implement two heuristics. The first is a basic one (eval1()) which simply uses the number of tokens to value its position. The second much `smarter' AI uses a far more complex heuristic (eval2()), which can be represented thus:
 \begin{equation}
 h(\mbox{black}) = \mbox{number black pieces}*f(\mbox{pieces}) + \mbox{factor}*\mbox{number available moves}
 \end{equation}
 Where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
 
 \subsection{Strategy A}
+Strategy A uses the minimax algorithm. This has been implemented recursively. We have allowed the depth explored by the algorithm to vary depending on the level (1,2 or 3) chosen by the user.
 
 \subsection{Strategy B}
 

@@ -7,19 +7,17 @@ import copy
 def minimax(game, depth=3,colour='W'):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3
   Colour is the colour the computer is playing"""
-  def max_val(game, colour, level):
+  def max_val(game, level):
     level += 1
-    othercol = 'W' if colour == 'B' else 'B'
+    colour = 'W'
     # need to explore deeper nodes
     if level <= depth:
       value = lost
-      for move in game.valid_moves('B')[1]:
+      for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
-        print "before move", new
         new.make_move(move[0],move[1], moveset)
-        print "now made move", new
-        temp = min_val(new, othercol, level)
+        temp = min_val(new, 'B', level)
         if value < temp:
           value = temp
           best = move
@@ -28,24 +26,23 @@ def minimax(game, depth=3,colour='W'):
       value = eval1(game, 'B')
       return value #smallest possible heuristic therefore will never be chosen
 
-  def min_val(game, colour, level):
+  def min_val(game, level):
     level += 1
-    othercol = 'W' if colour == 'B' else 'B'
+    colour = 'B'
     if level <= depth:
       value = won
-      for move in game.valid_moves('W')[1]:
+      for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
-        print "before move", new
         new.make_move(move[0],move[1], moveset)
-        print "now made move", new
-        temp = max_val(new, othercol, level)
+        temp = max_val(new, level)
         if value < temp:
           value = temp
           best = move
       return value
     else:
-      return won #largest possible heuristic therefore will never be chosen
+      value = eval1(game, 'B')
+      return value #largest possible heuristic therefore will never be chosen
 
   def eval1(game, colour):
     if which=="colour":
@@ -70,7 +67,10 @@ def minimax(game, depth=3,colour='W'):
   moves = game.valid_moves('W')[1]
   best = [moves[0],0]
   for move in moves:
-    val = min_val(game, 'B', level)
+    moveset = game.valid_moves(colour)[0]
+    new = game.copy()
+    new.make_move(move[0],move[1], moveset)
+    val = min_val(new, level)
     level = 1
     if val[1] > best[1]:
       best = val
