@@ -191,8 +191,23 @@ class Game(object):
     return int(x), int(y)
   def comp_move(self):
     if self.comp == 'A':
-      move = A.minimax(self, self.level,'W')
-      self.make_move(move[0],move[1],self.premove())
+      #move = A.minimax(self, self.level,'W')
+      vals = {}
+      nodes = []
+      highest = 0
+      best = ()
+      moveset = self.valid_moves('W')[0]
+      for move in moveset:
+        n = tree.Node(self, self.level, 'W', move[0], move[1], moveset)
+        nodes.append(n)
+      for n in nodes:
+        alpha = tree.minimax(n, self.level)
+        x, y = n.get_x(), n.get_y()
+        vals[(x,y)] = alpha
+        if alpha > highest:
+          highest = alpha
+          best = (x,y)
+      self.make_move(best[0],best[1],moveset)
     elif self.comp == 'B':
       move = alphabeta(self.board, self, alpha, beta, level)
       self.make_move(move)
