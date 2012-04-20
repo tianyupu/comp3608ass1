@@ -192,10 +192,10 @@ class Game(object):
   def comp_move(self):
     if self.comp == 'A':
       move = A.minimax(self, self.level)
-      self.make_move(move[0],move[1],self.premove())
+#      self.make_move(move[0],move[1],self.premove())
     elif self.comp == 'B':
       move = alphabeta(self.board, self, alpha, beta, level)
-      self.make_move(move)
+#      self.make_move(move)
     else:
       move = master(self.board, self,level)
     return move
