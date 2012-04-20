@@ -206,11 +206,26 @@ class Game(object):
       move = A.minimax(self, self.level)
 #      self.make_move(move[0],move[1],self.premove())
     elif self.comp == 'B':
-      move = B.alphabeta(self.board, self, alpha, beta, self.level)
-#      self.make_move(move)
+      vals = {}
+      nodes = []
+      highest = 0
+      best = ()
+      moveset = self.valid_moves('W')
+      for move in moveset:
+        n = tree.Node(self, self.level, 'W', move[0], move[1], moveset)
+        nodes.append(n)
+      for n in nodes:
+        ret = B.alphabeta(n, self.level, -10000, 10000, 'W')
+        x, y = n.get_x(), n.get_y()
+        vals[(x,y)] = ret
+        if ret > highest:
+          highest = ret
+          best = (x,y)
+      return best
     else:
       move = C.master(self, self.level)
     return move
+
   def make_move(self, x, y, moveset):
     self.moves_made.append((x,y))
     newcolour = self.get_currplayercolr()
@@ -287,7 +302,7 @@ class Game(object):
       if ret:
         cx, cy = c.get_x(), c.get_y()
         moves[(cx,cy)] = ret
-    return moves, moves.keys()
+    return moves
   def has_move(self, token, colour, other_col):
     row = self.check_row(token, colour, other_col)
     col = self.check_col(token, colour, other_col)
@@ -440,8 +455,8 @@ class Game(object):
   def premove(self):
     # check if the game has finished:
     # if there are no more possible moves by either player (generally, no more empty squares)
-    valids = self.valid_moves(self.get_currplayercolr())[0]
-    other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')[0]
+    valids = self.valid_moves(self.get_currplayercolr())
+    other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
       # print out final game position
       print self
@@ -479,7 +494,7 @@ class Game(object):
       print self
       print '==> MOVES MADE SO FAR:', self.moves_made
       print 'White: %d, Black: %d' % (self.board.get_white(), self.board.get_black())
-      print 'Your valid moves are:', self.valid_moves(self.get_currplayercolr())[1]
+      print 'Your valid moves are:', self.valid_moves(self.get_currplayercolr())#[1]
       if self.get_currplayercolr() == 'B' or self.comp == 'H':
         nx, ny = self.get_move()
         while (nx, ny) not in ret:

@@ -11,13 +11,19 @@ class Node(object):
     self.depth = depth
     self.colour = colour
     self.other_col = 'B' if colour == 'W' else 'W'
+    self.x = x
+    self.y = y
     self.children = []
-    moves = self.game.valid_moves(self.other_col)[0] # [0] for the moveset of all opponent responses
-    for move in moves:
-      new = self.game.copy()
-      nx, ny = move[0], move[1]
-      newnode = Node(new, depth-1, self.other_col, nx, ny, move)
-      self.children.append(newnode)
+    if depth == 1:
+      pass
+    elif depth > 1:
+      moves = self.game.valid_moves(self.other_col)
+      for move in moves:
+        new = self.game.copy()
+        nx, ny = move[0], move[1]
+        newnode = Node(new, depth-1, self.other_col, nx, ny, moves)
+        if newnode:
+          self.children.append(newnode)
   def eval_1(self, colour):
     if colour == "W":
       return self.game.board.get_white()
@@ -42,11 +48,36 @@ class Node(object):
     return self.colour
   def get_depth(self):
     return self.depth
+  def get_x(self):
+    return self.x
+  def get_y(self):
+    return self.y
+  def __str__(self):
+    return str(self.game)
 
 def minimax(node, depth):
-  if len(node.get_children()) == 0 or depth <= 0:
+  if node and len(node.get_children()) == 0 or depth <= 0:
     return node.eval_1('W')
-  alpha = -1000000
+  alpha = -10000
   for child in node.get_children():
     alpha = max(alpha, -minimax(child, depth-1))
   return alpha
+  
+def alphabeta(node, depth, alpha, beta, player_col):
+  other_col = 'W' if player_col == 'B' else 'B'
+  if depth == 0 or len(node.get_children()) == 0:
+    return node.eval_1('W')
+  if player_col == 'W': # W is the maxplayer
+    for child in node.get_children():
+      alpha = max(alpha, alphabeta(child, depth-1, alpha, beta, other_col))
+      if beta <= alpha:
+        break
+    return alpha
+  else:
+    for child in node.get_children():
+      beta = min(beta, alphabeta(child, depth-1, alpha, beta, other_col))
+      if beta <= alpha:
+        break
+    return beta
+    
+# alphabeta(origin, depth, -infinity, +inf, MaxPlayer)
