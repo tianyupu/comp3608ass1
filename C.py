@@ -22,19 +22,19 @@ def master(game, depth=3):
     if level <= depth:
       value = lost # should never be chosen
       best = [0, 0] # just a dummy move
-      moves = game.valid_moves(colour)[1]
+      moves = game.valid_moves(colour).keys()#[1]
       if len(moves)==0: # if we're at a leaf
         best = "pass"
         value = eval(new,'B')
       elif len(moves) == 1:
         best = moves[0]
-        moveset = game.valid_moves(colour)[0]
+        moveset = game.valid_moves(colour)#[0]
         new = game.copy()
         new.make_move(moves[0][0],moves[0][1], moveset)
         value = eval(game,'B')
       else:
         for move in moves:
-          moveset = game.valid_moves(colour)[0]
+          moveset = game.valid_moves(colour)#[0]
           new = game.copy()
           new.make_move(move[0],move[1], moveset)
           temp = min_val(new, level)
@@ -54,19 +54,19 @@ def master(game, depth=3):
     if level <= depth:
       value = won # will never be chosen as we are looking for the min
       best = [0, 0] # just a dummy move
-      moves = game.valid_moves(colour)[1]
+      moves = game.valid_moves(colour).keys()#[1]
       if len(moves)==0: # if we're at a leaf
         best = "pass"
         value = eval(new,'B')
       elif len(moves) == 1:
         best = moves[0]
-        moveset = game.valid_moves(colour)[0]
+        moveset = game.valid_moves(colour)#[0]
         new = game.copy()
         new.make_move(moves[0][0],moves[0][1], moveset)
         value = eval(game,'B')
       else:
         for move in moves:
-          moveset = game.valid_moves(colour)[0]
+          moveset = game.valid_moves(colour)#[0]
           new = game.copy()
           new.make_move(move[0],move[1], moveset)
           temp = max_val(new, level) # the optimal move and value that computer will make
@@ -86,7 +86,7 @@ def master(game, depth=3):
       return game.board.get_black()
 
   def eval2(move, colour):
-    moveset = game.valid_moves(which)[0]
+    moveset = game.valid_moves(which)#[0]
     new = game.make_move(move[0],move[1], moveset)
     heur = 0
     # for each token multiply it by stability and add them up
@@ -99,7 +99,7 @@ def master(game, depth=3):
 
   # body of minimax
   level = 1
-  moves = game.valid_moves('W')[1]
+  moves = game.valid_moves('W').keys()#[1]
   if len(moves) == 0: # no moves possible
     return "pass"
   if len(moves) == 1: # only one possible move
@@ -117,7 +117,7 @@ def master(game, depth=3):
   else:
     pq = PriorityQueue()
     for move in moves:
-      moveset = game.valid_moves('W')[0]
+      moveset = game.valid_moves('W')#[0]
       new = game.copy()
       new.make_move(move[0],move[1], moveset)
       val = min_val(new, level)
