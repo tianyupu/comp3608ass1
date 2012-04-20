@@ -56,23 +56,60 @@ Each of these methods has its own shortcomings and advantages. We chose to imple
 h(\mbox{black}) = \mbox{number black pieces}*f(\mbox{pieces}) + \mbox{factor}*\mbox{number available moves}
 \end{equation}
 Where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
+TALK ABOUT HOW BOTH HEURISTICS ARE ADMISSABLE
 
 \subsection{Strategy A}
-Strategy A uses the minimax algorithm. This has been implemented recursively. We have allowed the depth explored by the algorithm to vary depending on the level (1,2 or 3) chosen by the user.
+Strategy A uses the minimax algorithm. This has been implemented recursively. We have allowed the depth explored by the algorithm to vary depending on the level (1, 2 or 3) chosen by the user. The algorithm can be summarised thus:
+\begin{enumerate}
+\item Perform a depth-first search either to the terminal state or to the value $depth = level*2+1$, whichever comes first.
+\item Evaluate the value of the heuristic at each terminal state.
+\item Return the minimax value. Return MIN if it is the opponents move, and MAX heuristic at that level if it is your move.
+\item Select the move with the maximum of the minimax values of the first level of children.
+\end{enumerate}
+Note this assumes that min will play optimally in each turn.
 
 \subsection{Strategy B}
+Strategy B is very similar to strategy A. The exception is it avoids exploring some paths, or prunes some paths. This allows it to explore deeper. The basic algorithm can be summarised thus:
+
+\begin{enumerate}
+\item Traverse the tree in depth first search order.
+\item At each non-leaf node store the 'best so far' value: max is the $\alpha$ or the best maximum value so far, min is the $\beta$ or the best minimum value found so far.
+\item Don't explore below a node n if either: n is a MAX node and $\alpha(n) \geq beta(i)$ for some MIN node i that is an ancestor of n. This is the $\beta$ cutoff. OR: n is a MIN node and $\beta(n) \leq \alpha(i)$ for some MAX node i that is an ancestor of n. This is the $\alpha$ cutoff.
+\end{enumerate}
+Note this assumes that min will play optimally in each turn.
 
 \subsection{Strategy C}
+For strategy C we decided to implement a non-deterministic strategy. We ran the mini-max algorithm and selected the best three outcomes (ranked). We then returned one of the moves based on a random card draw where each solution was weighted based on its rank thus:
+\begin{enumerate}
+\item The best move had an 80\% chance of being selected.
+\item The second best move had a 15\% chance of being selected.
+\item The third best move had a 5\% chance of being selected.
+\end{enumerate}
+Although this AI does not always select the optimal move, it is non-deterministic and thus harder to predict. We felt that the other two strategies would be beatable by experienced players who could predict where the AI would move next and thus adjust their strategy. The element of chance added here doesn't allow such calculations. Further, sometimes taking a risky move may lead to a more optimal final state.
 
 \section{Empirical Setup}
 
 \section{Findings}
-
+We ran THIS MANY GAMES and found that strategy BLAH performed best winning X percent as opposed to the Y percent or Z percent
 \subsection{Results}
 
 \subsection{Conclusion}
 
 \section{Reflection}
+
+\subsection{Lisa's Reflection: 309201470}
+
+I really enjoyed this assignment and felt that I learnt a lot from it. It was very satisfying to implement a working game and strategies. I particularly liked the open-ended-ness which meant that we could get creative with the third strategy. The most valuable thing I felt I learnt from this assignment is the complexity of AI. This complexity arrises from user-input and makes it very difficult to create an ideal opponent. The human opponent will act very differently based on his/ her level of expertice and will often not chose the optimal strategy. Thus it makes the task of the AI much more complex in moving optimally. Further it made me consider the importance of chance. Choosing the most strategically sound option each time is very predictable and is not an optimal strategy. In addition I learnt a lot about the game of Othello and the many complicated strategies involved.
+
+\subsection{Tian's Reflection: 310182212}
+
+\section{Extras}
+
+\subsection{Multi-player}
+In addition to the assignment requirements we implemented a human-vs-human game option.
+
+\subsection{Possible moves}
+We print out a list of possible moves for each player to make the game easier and more pleasant to play.
 
 \section{Appendix}
 
