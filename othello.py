@@ -197,10 +197,10 @@ class Game(object):
     while len(fields) != 2:
       for f in fields:
         if not f.isdigit():
-          continue
+          break
       line = raw_input("Type your move in the form 'x y' (without quotes): ").strip()
-      fields = line.split()
-    return int(x), int(y)
+      fields = line.split() 
+    return int(fields[0]), int(fields[1])
   def comp_move(self):
     if self.comp == 'A':
       move = A.minimax(self, self.level)
