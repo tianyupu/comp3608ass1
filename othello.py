@@ -154,17 +154,15 @@ class Player(object):
     return self.colour
 
 class Game(object):
-  def __init__(self, size=8, level=0):
+  def __init__(self, size=8):
     """Creates a new Othello game.
 
     Arguments:
     size -- the desired size of the Othello board (default 8)
-    level -- the desired difficulty of the computer opponent (default 0).
     This affects the depth of the search space in the mini-max algorithm etc.
     """
     abc = {'A':'Amy','B':'Ben','C':'Cameron'}
     self.size = size
-    self.level = level
     self.board = Board(size)
     char_select = raw_input("Which AI would you like to play against? Amy (A), Ben (B), Cameron (C), or human (H): ").strip()
     while char_select not in 'ABCH':
@@ -173,10 +171,6 @@ class Game(object):
     if self.comp == 'H':
       self.players = [Player(raw_input("Black player please type your name\n"),'B'), Player(raw_input("White player please type your name\n"), 'W')]
     else:
-      lvl = raw_input("Which level would you like to play at: 1, 2 or 3? ").strip()
-      while lvl not in '123':
-        lvl = raw_input("Please enter 1, 2 or 3: ").strip()
-      self.level = int(lvl) + 2 # makes base level depth of three
       self.players = [Player(raw_input("You are black, please type your name: "),'B'), Player(abc[self.comp], 'W')]
     self.curr_player = 0
     self.moves_made = []
@@ -199,11 +193,11 @@ class Game(object):
         if not f.isdigit():
           break
       line = raw_input("Type your move in the form 'x y' (without quotes): ").strip()
-      fields = line.split() 
+      fields = line.split()
     return int(fields[0]), int(fields[1])
   def comp_move(self):
     if self.comp == 'A':
-      move = A.minimax(self, self.level)
+      move = A.minimax(self)
 #      self.make_move(move[0],move[1],self.premove())
     elif self.comp == 'B':
       vals = {}
@@ -212,10 +206,10 @@ class Game(object):
       best = ()
       moveset = self.valid_moves('W')
       for move in moveset:
-        n = tree.Node(self, self.level, 'W', move[0], move[1], moveset)
+        n = tree.Node(self, 3, 'W', move[0], move[1], moveset) # default depth level 3
         nodes.append(n)
       for n in nodes:
-        ret = B.alphabeta(n, self.level, -10000, 10000, 'W')
+        ret = B.alphabeta(n, 3, -10000, 10000, 'W')
         x, y = n.get_x(), n.get_y()
         vals[(x,y)] = ret
         if ret > highest:
@@ -223,7 +217,7 @@ class Game(object):
           best = (x,y)
       return best
     else:
-      move = C.master(self, self.level)
+      move = C.master(self)
     return move
 
   def make_move(self, x, y, moveset):
@@ -494,13 +488,14 @@ class Game(object):
       print self
       print '==> MOVES MADE SO FAR:', self.moves_made
       print 'White: %d, Black: %d' % (self.board.get_white(), self.board.get_black())
-      print 'Your valid moves are:', self.valid_moves(self.get_currplayercolr()).keys()#[1]
       if self.get_currplayercolr() == 'B' or self.comp == 'H':
+        print 'Your valid moves are:', self.valid_moves(self.get_currplayercolr()).keys()#[1]
         nx, ny = self.get_move()
         while (nx, ny) not in ret:
           print "The move you entered was invalid. Please try again!"
           nx, ny = self.get_move()
       elif self.comp in 'ABC':
+        print 'My valid moves are:', self.valid_moves(self.get_currplayercolr()).keys()#[1]
         nx, ny = self.comp_move()
       self.make_move(nx, ny, ret)
 

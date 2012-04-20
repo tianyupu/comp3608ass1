@@ -11,7 +11,7 @@ from Queue import PriorityQueue
 prob1 = .8
 prob2 = .15
 
-def master(game, depth=3):
+def master(game):
   """ Given a game and the current board it should go to level depth to determine which move to make. Default depth is 3
   Colour is the colour the computer is playing"""
   def max_val(game, level):
@@ -99,6 +99,7 @@ def master(game, depth=3):
 
   # body of minimax
   level = 1
+  depth = 3
   moves = game.valid_moves('W').keys()#[1]
   if len(moves) == 0: # no moves possible
     return "pass"
