@@ -5,7 +5,7 @@ lost = -10000
 # start by doing basic minimax
 # but add in additional checks to allow break points i.e. pruning
 def alpha_beta(game, alpha, beta, depth):
-  level = 1
+
   def max_val(game, colour, level, alpha, beta):
     level = level + 1
     if level <= depth:
@@ -55,7 +55,6 @@ def alpha_beta(game, alpha, beta, depth):
     # add twice the number of possible moves
     heur += 2*len(new.valid_moves)
 
-#  a,s = argmax(valid_moves(), lambda ((ac,board)): min_value(board))
   level = 1
   moves = game.valid_moves('W')[1]
   best = [moves[0],0]

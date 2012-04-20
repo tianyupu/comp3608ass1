@@ -23,7 +23,7 @@ def minimax(game, depth=3):
         best = moves[0]
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
-        new.make_move(move[0],move[1], moveset)
+        new.make_move(moves[0][0],moves[0][1], moveset)
         value = eval(game,'B')
       else:
         for move in moves:
@@ -55,7 +55,7 @@ def minimax(game, depth=3):
         best = moves[0]
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
-        new.make_move(move[0],move[1], moveset)
+        new.make_move(moves[0][0],moves[0][1], moveset)
         value = eval(game,'B')
       else:
         for move in moves:
