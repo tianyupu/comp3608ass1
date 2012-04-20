@@ -4,11 +4,12 @@
 \usepackage{amsthm}
 \usepackage{fancyhdr}
 \usepackage{graphicx}
+\usepackage{natbib}
 \pagestyle{fancy}
 \lhead{SID: 309201470}
 \rhead{SID: 310182212}
 
-\title{COMP3608: Othello}
+\title{COMP3608 Artificial Intelligence (Adv): Othello}
 \author{Elizaveta Lisa Fedorenko: 309201470
 \\ Tianyu Pu: 310182212}
 \date{\today}
@@ -18,31 +19,69 @@
 \begin{document}
 \maketitle
 
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction and Background}
+\subsection{Othello: The Game}
+Othello (also commonly known as Reversi), is a two-player strategy board game played on an 8x8 board. 
+The game begins with four pieces in the centre, two for each player's colour. Both players take turns
+to place a piece in their colour onto the board, flipping over all the opponent's pieces that are caught
+or `flanked' between the new piece and another of the player's colour. The move is only valid if at 
+least one token was flanked in any direction. The game ends when the board is filled or when there are
+no more possible moves for either player.
+
+\subsection{Interpretation of the Rules}
+There are a number of variations on the rules of Othello that are used in different situations such as
+tournaments. This section outlines the version of the rules that was used to create the game.
+\begin{enumerate}
+ \item You can only place a piece on a tile that is empty and is in one of the eight squares immediately
+ surrounding a piece of the opponent's colour.
+ \item You can flip the opponent's pieces that are directly flanked by your new piece (the piece just
+ put down) and the nearest piece of your colour in any of the eight directions.
+ \item
+\end{enumerate}
+
 \section{Implementation of Strategies}
 \subsection{Heuristic}
-The game of Othello is complex ~\cite{post}. We felt that each strategy didn't differ sufficiently to warrant a seperate evalutation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows [INSERT REFERENCE]:
+The game of Othello is complex ~\cite{post}. We felt that each strategy didn't differ sufficiently to warrant a seperate evaluation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows ~\cite{strategy}:
 \begin{enumerate}
-\item \emph{Number of tokens} Obviously as the aim of the game is to have the most tokens, this is a good basic estimate of who is winning
+\item \emph{Number of tokens} Obviously as the aim of the game is to have the most tokens, this is a good basic estimate of who is winning at any one point in time.
 \item \emph{Stability} Certain pieces are a lot easier to 'flip' than others. In particular corners are very stable and cannot be flipped. Pieces protruding from corners also are more stable.
-\item \emph{mobility} Having more moves available means you are better positioned strategically and less constricted.
+\item \emph{Mobility} Having more moves available means you are better positioned strategically and less constricted.
 \end{enumerate}
-Each of these methods has its own shortcomings and advantages [INSERT REFERENCE]. We therefore chose to implement a heuristic that weighted each method appropriately. Thus creating a much 'smarter' AI.
+Each of these methods has its own shortcomings and advantages. We therefore chose to implement a heuristic that weighted each method appropriately, thus creating a much `smarter' AI.
 Our heuristic can be represented thus:
 \begin{equation}
 h(\mbox{black}) = \mbox{number black pieces}*f(\mbox{pieces}) + \mbox{factor}*\mbox{number available moves}
 \end{equation}
 Where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
+
 \subsection{Strategy A}
+
 \subsection{Strategy B}
+
 \subsection{Strategy C}
+
+\section{Empirical Setup}
+
 \section{Findings}
+
 \subsection{Results}
+
 \subsection{Conclusion}
+
 \section{Reflection}
+
 \section{Appendix}
+
 \subsection{Strategy A}
+
 \subsection{Strategy B}
+
 \subsection{Strategy C}
+
 \bibliographystyle{plainnat}
 \bibliography{bib}
+
 \end{document}
