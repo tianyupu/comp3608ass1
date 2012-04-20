@@ -196,7 +196,7 @@ class Game(object):
       nodes = []
       highest = 0
       best = ()
-      moveset = self.valid_moves('W')[0]
+      moveset = self.valid_moves('W')
       for move in moveset:
         n = tree.Node(self, self.level, 'W', move[0], move[1], moveset)
         nodes.append(n)
@@ -207,7 +207,7 @@ class Game(object):
         if alpha > highest:
           highest = alpha
           best = (x,y)
-      self.make_move(best[0],best[1],moveset)
+      return best
     elif self.comp == 'B':
       move = alphabeta(self.board, self, alpha, beta, level)
       self.make_move(move)
@@ -290,7 +290,7 @@ class Game(object):
       if ret:
         cx, cy = c.get_x(), c.get_y()
         moves[(cx,cy)] = ret
-    return moves, moves.keys()
+    return moves
   def has_move(self, token, colour, other_col):
     row = self.check_row(token, colour, other_col)
     col = self.check_col(token, colour, other_col)
@@ -443,8 +443,8 @@ class Game(object):
   def premove(self):
     # check if the game has finished:
     # if there are no more possible moves by either player (generally, no more empty squares)
-    valids = self.valid_moves(self.get_currplayercolr())[0]
-    other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')[0]
+    valids = self.valid_moves(self.get_currplayercolr())
+    other_valids = self.valid_moves('W' if self.get_currplayercolr() == 'B' else 'B')
     if len(valids) == 0 and len(other_valids) == 0:
       # print out final game position
       print self

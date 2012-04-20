@@ -6,8 +6,6 @@ class Node(object):
     with colour 'colour' had been made, then generates all the children --
     all possible moves the opposing player could have made in response to this
     particular move."""
-    if depth < 1:
-      return 
     self.game = game.copy()
     self.game.make_move(x, y, moveset) # makes the move
     self.depth = depth
@@ -16,12 +14,16 @@ class Node(object):
     self.x = x
     self.y = y
     self.children = []
-    moves = self.game.valid_moves(self.other_col)[0] # [0] for the moveset of all opponent responses
-    for move in moves:
-      new = self.game.copy()
-      nx, ny = move[0], move[1]
-      newnode = Node(new, depth-1, self.other_col, nx, ny, moves[move])
-      self.children.append(newnode)
+    if depth == 1:
+      pass
+    elif depth > 1:
+      moves = self.game.valid_moves(self.other_col)
+      for move in moves:
+        new = self.game.copy()
+        nx, ny = move[0], move[1]
+        newnode = Node(new, depth-1, self.other_col, nx, ny, moves)
+        if newnode:
+          self.children.append(newnode)
   def eval_1(self, colour):
     if colour == "W":
       return self.game.board.get_white()
@@ -50,9 +52,11 @@ class Node(object):
     return self.x
   def get_y(self):
     return self.y
+  def __str__(self):
+    return str(self.game)
 
 def minimax(node, depth):
-  if len(node.get_children()) == 0 or depth <= 0:
+  if node and len(node.get_children()) == 0 or depth <= 0:
     return node.eval_1('W')
   alpha = -1000000
   for child in node.get_children():
