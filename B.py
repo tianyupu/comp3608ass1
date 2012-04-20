@@ -4,9 +4,9 @@ lost = -10000
 
 # start by doing basic minimax
 # but add in additional checks to allow break points i.e. pruning
-def alpha_beta(game, alpha, beta, depth):
+def alpha_beta(game, alpha, beta, depth = 4):
 
-  def max_val(game, colour, level, alpha, beta):
+  def max_val(game, level, alpha, beta):
     level = level + 1
     if level <= depth:
       value = lost
@@ -19,7 +19,7 @@ def alpha_beta(game, alpha, beta, depth):
     else:
       return lost #smallest possible heuristic therefore will never be chosen
 
-  def min_val(board):
+  def min_val(game, level, alpha, beta):
     level = level + 1
     if level <= depth:
       value = won
