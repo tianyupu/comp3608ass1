@@ -13,39 +13,43 @@ def minimax(game, depth=3,colour='W'):
     # need to explore deeper nodes
     if level <= depth:
       value = lost
+      best = [0, [0,0]]
       for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
-        temp = min_val(new, 'B', level)
-        if value < temp:
-          value = temp
-          best = move
-      return value
+        temp = min_val(new, level)
+        if value < temp[0]:
+          value = temp[0]
+          best = move[1]
+      return [value, best]
     else:
       value = eval1(game, 'B')
-      return value #smallest possible heuristic therefore will never be chosen
+      best = [0,0] # just need a dummy value
+      return [value, best] # smallest possible heuristic therefore will never be chosen
 
   def min_val(game, level):
     level += 1
     colour = 'B'
     if level <= depth:
       value = won
+      best = [0, [0,0]]
       for move in game.valid_moves(colour)[1]:
         moveset = game.valid_moves(colour)[0]
         new = game.copy()
         new.make_move(move[0],move[1], moveset)
         temp = max_val(new, level)
-        if value < temp:
-          value = temp
-          best = move
-      return value
+        if value < temp[0]:
+          value = temp[0]
+          best = move[1]
+      return [value, best]
     else:
       value = eval1(game, 'B')
-      return value #largest possible heuristic therefore will never be chosen
+      best = [0,0] # just need a dummy value
+      return [value, best] #largest possible heuristic therefore will never be chosen
 
   def eval1(game, colour):
-    if which=="colour":
+    if colour=="W":
       return game.board.get_white()
     else:
       return game.board.get_black()
@@ -65,15 +69,15 @@ def minimax(game, depth=3,colour='W'):
   # body of minimax
   level = 1
   moves = game.valid_moves('W')[1]
-  best = [moves[0],0]
+  print moves[0]
+  best = [0,moves[0]]
   for move in moves:
     moveset = game.valid_moves(colour)[0]
     new = game.copy()
     new.make_move(move[0],move[1], moveset)
     val = min_val(new, level)
     level = 1
-    if val[1] > best[1]:
-      best = val
-  return best[0]
-  # a,s = argmax(valid_moves(), lambda ((ac,board)): min_value(board))
-  return a
+    if val[0] > best[0]:
+      best = [val[0],val[1]]
+    print "aww yeah best is", best
+  return best[1]
