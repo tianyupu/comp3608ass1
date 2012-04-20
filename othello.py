@@ -197,7 +197,7 @@ class Game(object):
       move = alphabeta(self.board, self, alpha, beta, level)
 #      self.make_move(move)
     else:
-      move = master(self.board, self,level)
+      move = master(self, level)
     return move
   def make_move(self, x, y, moveset):
     self.moves_made.append((x,y))
