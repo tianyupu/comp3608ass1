@@ -91,9 +91,9 @@ def master(game):
     toks = game.board.get_alltoks()
     for tok in toks:
       if tok.get_colour() == colour:
-        heur += tok.get_stability()
+        heur += tok.get_stability()*2
     # add twice the number of possible moves
-    heur += 2*len(new.valid_moves(colour))
+    heur += len(new.valid_moves(colour))
 
   # body of minimax
   level = 1

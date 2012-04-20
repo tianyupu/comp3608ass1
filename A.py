@@ -94,14 +94,19 @@ def minimax(game):
   depth = 3
   level = 1
   moves = game.valid_moves('W').keys()#[1]
-  best = [0,moves[0]]
-  for move in moves:
-    moveset = game.valid_moves('W')#[0]
-    new = game.copy()
-    new.make_move(move[0],move[1], moveset)
-    val = min_val(new, level)
-    level = 1
-    if val[0] > best[0]:
-      best = [val[0],move]
-  print "Aww yeah I know which move is best I played", best
-  return best[1]
+  if len(moves) == 0: # no moves possible
+    return "pass"
+  if len(moves) == 1: # only one possible move
+    return moves[0]
+  else:
+    best = [0,moves[0]]
+    for move in moves:
+      moveset = game.valid_moves('W')#[0]
+      new = game.copy()
+      new.make_move(move[0],move[1], moveset)
+      val = min_val(new, level)
+      level = 1
+      if val[0] > best[0]:
+        best = [val[0],move]
+    print "Aww yeah I know which move is best I played", best
+    return best[1]
