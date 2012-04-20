@@ -190,16 +190,15 @@ class Game(object):
     x, y = line.split()
     return int(x), int(y)
   def comp_move(self):
-    if self.comp == 'A':
-      #move = A.minimax(self, self.level,'W')
-      vals = {}
-      nodes = []
-      highest = 0
-      best = ()
-      moveset = self.valid_moves('W')
-      for move in moveset:
-        n = tree.Node(self, self.level, 'W', move[0], move[1], moveset)
-        nodes.append(n)
+    vals = {}
+    nodes = []
+    highest = 0
+    best = ()
+    moveset = self.valid_moves('W')
+    for move in moveset:
+      n = tree.Node(self, self.level, 'W', move[0], move[1], moveset)
+      nodes.append(n)
+    if self.comp == 'A':  
       for n in nodes:
         alpha = tree.minimax(n, self.level)
         x, y = n.get_x(), n.get_y()
@@ -209,11 +208,16 @@ class Game(object):
           best = (x,y)
       return best
     elif self.comp == 'B':
-      move = alphabeta(self.board, self, alpha, beta, level)
-      self.make_move(move)
+      for n in nodes:
+        ret = tree.alphabeta(n, self.level, -10000, 10000, 'W')
+        x, y = n.get_x(), n.get_y()
+        vals[(x,y)] = ret
+        if ret > highest:
+          highest = ret
+          best = (x,y)
     else:
       move = master(self.board, self,level)
-    return move
+    return best
   def make_move(self, x, y, moveset):
     self.moves_made.append((x,y))
     newcolour = self.get_currplayercolr()
@@ -488,7 +492,7 @@ class Game(object):
         while (nx, ny) not in ret:
           print "The move you entered was invalid. Please try again!"
           nx, ny = self.get_move()
-      elif self.comp == 'A':
+      elif self.comp in 'ABC':
         nx, ny = self.comp_move()
       self.make_move(nx, ny, ret)
 
