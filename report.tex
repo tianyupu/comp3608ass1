@@ -45,8 +45,11 @@ tournaments. This section outlines the version of the rules that was used to cre
 
 \subsection{Playing the game}
 Our version of the game begins by asking the player whether they wish to verse a human or else which of the three AIs they wish to play. Input is tested to be one of the letters A, B, C or H. If invalid input is given the prompt is given again. They are then asked for their name (or both their names). As the name can be any value this is not tested (It is only included to make the input more personal).
+
 The player is then told which colour they are (the game is symetric so this doesn't limit the game choices). The game defaults to human playing first. The rest of the user input requires the user to type in their move of the form 'x y' eg. 1 2. This is tested to be a valid move. It is not tested to be correct syntax. This is assumed (as per assignment spec).
 In order to make the game more user friendly, at each stage your valid moves are printed out as a list, so you can chose a move. And all the moves played so far are also printed. When the AI moves you also see their valid moves and which move they choose. This makes games more recordable and user-friendly.
+
+In addition a score is given after every move. Also at the end game the final board, score and winner is displayed.
 
 \section{Implementation of Strategies}
 \subsection{Heuristic}

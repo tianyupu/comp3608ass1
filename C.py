@@ -117,7 +117,6 @@ def master(game):
       return other
   # in this case we store the possible moves in a priority queue (implemented as a heap) Note there is no real optimiisation to this strategy if there are less than 3 moves
   else:
-    #pq = PriorityQueue()
     sortlist = []
     for move in moves:
       new = game.copy()
@@ -125,12 +124,9 @@ def master(game):
       new.make_move(move[0],move[1], moveset)
       val = min_val(new, level)
       level = 1
-      print val, move
-      #pq.put(move,-val[0])
       sortlist.append([val[0],move])
     rand = random.random()
     sortlist.sort()
-    print sortlist
     #best = pq.get()
     best = sortlist.pop()
     if rand > .8:
