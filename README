@@ -1,5 +1,28 @@
-This is the repository for the COMP3608 Artificial Intelligence assignment 1
-in semester 1, 2012.
+================================================================================
+      COMP3608 Artificial Intelligence - Assignment 1, Semester 1, 2012
+================================================================================
+by Tianyu Pu (SID 310182212) and Lisa Fedorenko (SID 309201470)
 
-Can you readme Tian???
+Welcome to our implementation of the strategy board game Othello! Read on for 
+instructions on how to run the game.
 
+Minimum requirements:
+ * Python 2.6.x or later, but not any Python 3.x version
+
+Quick-start Guide (Windows):
+ 1. Download a Python installer from http://www.python.org/
+ 2. Follow the instructions to install Python from the executable
+ 3. Open IDLE (the Python GUI)
+ 4. Go to File > Open, and find the file 'othello.py'
+ 5. Press F5 to run the file
+ 6. From there, follow the prompts on-screen
+
+Quick-start Guide (UNIX):
+ 1. Open up a shell window
+ 2. Type 'python -V' and check that the version is suitable
+ 3. Navigate to the folder where the 'othello.py' file is saved
+ 4. At the shell prompt, type 'python othello.py' to run the program
+ 5. From there, follow the prompts on-screen
+
+If there are any problems, please email either Tian (pu.tianyu@gmail.com) or
+Lisa (lisafedorenko@gmail.com).

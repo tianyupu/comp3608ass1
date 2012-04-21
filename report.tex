@@ -110,11 +110,27 @@ We expected strategy A to perform the worst as it didn't search as deeply and di
 With 10 runs per computer opponent, we noted these results:
 \begin{itemize}
  \item against strategy A (minimax), the randomly playing human won 4 times out of 10 games
- \item against strategy B (alpha-beta pruning), the randomly playing human won time out of 10 games
- \item against strategy C (described above), the randomly playing human won times out of 10 games
+ \item against strategy B (alpha-beta pruning), the randomly playing human won 4 times out of 10 games
+ \item against strategy C (described above), the randomly playing human won 3 times out of 10 games
 \end{itemize}
 
 \subsection{Conclusion}
+Had we run a greater number of tests, our results would have been more accurate. However, we were limited
+by the time we had to run these tests.
+
+The results we observed were as we expected -- both minimax and alpha-beta strategies were equivalent,
+since for both we limited the cut-off depth to the same number (3) and used the same heuristic function.
+Had we run more games, we would have expected slight discrepancies in the number of games that the AI
+won -- but we would still expect a very similar outcome for both strategy A and B. We noted (but did not
+measure exactly) that the 10 runs for strategy B took less time to run than for strategy A, which is also
+what we would expect, knowing the properties of each algorithm.
+
+Strategy C incorporated some level of unpredictability into the strategy, which showed no noticeable
+improvements against the other 2 strategies (with the results we observed), especially because the human
+was playing moves entirely at random. However we designed this strategy because it would be effective
+against experienced human players who could easily predict what the computer AI would play next -- and
+therefore beat it. As can be seen from the results, there is no major difference when the games are played
+at random.
 
 \section{Reflection}
 
@@ -140,12 +156,10 @@ If a move isn't possible for either player at any turn, we print out a message i
 turn passes immediately to the other player.
 
 \section{Appendix}
+For each of the three strategies, we played each opening move to test whether we got the expected output,
+and to see if the AI responded correctly.
 
-\subsection{Strategy A}
-
-\subsection{Strategy B}
-
-\subsection{Strategy C}
+The output of the tests can be seen in the a, b and c files in the assignment folder.
 
 \bibliographystyle{plainnat}
 \bibliography{bib}
