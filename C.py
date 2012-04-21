@@ -44,7 +44,7 @@ def master(game):
             best = move
       return [value, best]
     else:
-      value = eval2(game, 'B')
+      value = eval2(game, 'W')
       best = [0,0] # just need a dummy value
       return [value, best] # smallest possible heuristic therefore will never be chosen
 
@@ -76,7 +76,7 @@ def master(game):
             best = move
       return [value, best]
     else:
-      value = eval2(game, 'B')
+      value = eval2(game, 'W')
       best = [0,0] # just need a dummy value
       return [value, best] #largest possible heuristic therefore will never be chosen
 
