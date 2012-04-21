@@ -39,7 +39,7 @@ tournaments. This section outlines the version of the rules that was used to cre
  surrounding a piece of the opponent's colour.
  \item You can flip the opponent's pieces that are directly flanked by your new piece (the piece just
  put down) and the nearest piece of your colour in any of the eight directions.
- \item A move is only valid if you flip/ or flank at least one of your opponents pieces.
+ \item A move is only valid if you flip (or flank) at least one of your opponent's pieces.
  \item A player may not pass unless they have no more valid moves: in this case they automatically pass.
 \end{enumerate}
 
@@ -60,7 +60,7 @@ Each of these methods has its own shortcomings and advantages. We chose to imple
 \begin{equation}
 h(\mbox{black}) = \mbox{number black pieces}*f(\mbox{pieces}) + \mbox{factor}*\mbox{number available moves}
 \end{equation}
-Where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
+where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
 TALK ABOUT HOW BOTH HEURISTICS ARE ADMISSABLE
 
 \subsection{Strategy A}
@@ -92,31 +92,49 @@ For strategy C we decided to implement a non-deterministic strategy. We ran the 
 \end{enumerate}
 Although this AI does not always select the optimal move, it is non-deterministic and thus harder to predict. We felt that the other two strategies would be beatable by experienced players who could predict where the AI would move next and thus adjust their strategy. The element of chance added here doesn't allow such calculations. Further, sometimes taking a risky move may lead to a more optimal final state.
 
-\section{Empirical Setup}
+\section{Empirical Evaluation of the Strategies}
 
-\section{Findings}
-\subsection{expectation}
+\subsection{Set Up}
+We decided to compare the relative strength of the AIs by conducting test experiements. For the human vs AI games,
+we decided to let the human play randomly (pick a random valid move each turn) and have each respective AI strategy
+respond to that. The outcome was recorded (whether black or white won, with white being the computer opponent).
+
+\subsection{Findings}
+\subsubsection{Expectation}
 We expected strategy A to perform the worst as it didn't search as deeply and didn't have a great heuristic. We also expected strategy B to have shortcomings due to the predictability as well as the more basic heuristic function used. Strategy C we expected would have very few losses. This is because of a number of factors. Firstly it is random, and thus cannot be predicted by a clever opponent. Secondly and most importantly it uses a much more accurate heuristic function.
-\subsection{Results}
-We ran THIS MANY GAMES and found that strategy BLAH performed best winning X percent as opposed to the Y percent or Z percent
+
+\subsubsection{Results}
+With 10 runs per computer opponent, we noted these results:
+\begin{itemize}
+ \item against strategy A (minimax), the randomly playing human won 4 times out of 10 games
+ \item against strategy B (alpha-beta pruning), the randomly playing human won time out of 10 games
+ \item against strategy C (described above), the randomly playing human won times out of 10 games
+\end{itemize}
 
 \subsection{Conclusion}
 
 \section{Reflection}
 
 \subsection{Lisa's Reflection: 309201470}
-
 I really enjoyed this assignment and felt that I learnt a lot from it. It was very satisfying to implement a working game and strategies. I particularly liked the open-ended-ness which meant that we could get creative with the third strategy. The most valuable thing I felt I learnt from this assignment is the complexity of AI. This complexity arrises from user-input and makes it very difficult to create an ideal opponent. The human opponent will act very differently based on his/ her level of expertice and will often not chose the optimal strategy. Thus it makes the task of the AI much more complex in moving optimally. Further it made me consider the importance of chance. Choosing the most strategically sound option each time is very predictable and is not an optimal strategy. In addition I learnt a lot about the game of Othello and the many complicated strategies involved.
 
 \subsection{Tian's Reflection: 310182212}
+I feel that this has been one of the most interesting and educational code-writing tasks that I have done to-date.
+I found it challenging at times, but ultimately rewarding when everything came together. I think that the most
+important thing I learned from this assignment was the application of artificial intelligence to real-world, concrete
+examples (such as games). This assignment has allowed me to gain a deeper understanding of the course material
+covered in class, and has also taught me the value of perserverance. I also feel that writing this report, and 
+having to communicate our findings to an audience, was also a very important skill to practice.
 
-\section{Extras}
+\section{Extensions}
 
-\subsection{Multi-player}
+\subsection{Multiplayer}
 In addition to the assignment requirements we implemented a human-vs-human game option.
 
 \subsection{Possible moves}
 We print out a list of possible moves for each player to make the game easier and more pleasant to play.
+If a move isn't possible for either player at any turn, we print out a message indicating this, and the
+turn passes immediately to the other player.
 
 \section{Appendix}
 
