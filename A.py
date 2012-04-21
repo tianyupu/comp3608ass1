@@ -19,14 +19,12 @@ def minimax(game):
       if len(moves)==0: # if we're at a leaf
         best = "pass"
         value = min_val(game, level)
-        #value = eval(new,'B')
       elif len(moves) == 1:
         best = moves[0]
         moveset = game.valid_moves(colour)#[0]
         new = game.copy()
         new.make_move(moves[0][0],moves[0][1], moveset)
         value = min_val(new, level)
-        #value = eval(game,'B')
       else:
         for move in moves:
           moveset = game.valid_moves(colour)#[0]
@@ -36,7 +34,7 @@ def minimax(game):
           if temp[0] > value:
             value = temp[0]
             best = move
-        return [value, best]
+      return [value, best]
     else:
       value = eval1(game, 'B')
       best = [0,0] # just need a dummy value
@@ -63,8 +61,8 @@ def minimax(game):
         #value = eval(game,'B')
       else:
         for move in moves:
-          moveset = game.valid_moves(colour)#[0]
           new = game.copy()
+          moveset = new.valid_moves(colour)#[0]
           new.make_move(move[0],move[1], moveset)
           temp = max_val(new, level) # the optimal move and value that computer will make
           if temp[0] < value: # if we have a smaller heuristic option choose it

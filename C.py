@@ -5,6 +5,7 @@
 # 15% chance of the second best
 # 5% chance of the last one
 import random
+import A
 won = 10000
 lost = -10000
 from Queue import PriorityQueue
@@ -28,20 +29,20 @@ def master(game):
         value = min_val(game, level)
       elif len(moves) == 1:
         best = moves[0]
+        moveset = game.valid_moves(colour)#[0]
         new = game.copy()
-        moveset = new.valid_moves(colour)#[0]
         new.make_move(moves[0][0],moves[0][1], moveset)
         value = min_val(new, level)
       else:
         for move in moves:
+          moveset = game.valid_moves(colour)#[0]
           new = game.copy()
-          moveset = new.valid_moves(colour)#[0]
           new.make_move(move[0],move[1], moveset)
           temp = min_val(new, level)
           if temp[0] > value:
             value = temp[0]
             best = move
-        return [value, best]
+      return [value, best]
     else:
       value = eval2(game, 'B')
       best = [0,0] # just need a dummy value
@@ -94,40 +95,47 @@ def master(game):
         heur += tok.get_stability()*2
     # add twice the number of possible moves
     heur += len(new.valid_moves(colour))
+    return heur
 
-  # body of minimax
+  # MINIMAX BODY
+  # global vars
   level = 1
   depth = 3
-  moves = game.valid_moves('W').keys()#[1]
+  moves = game.valid_moves('W').keys()
   if len(moves) == 0: # no moves possible
-    return "pass"
-  if len(moves) == 1: # only one possible move
+    return "pass" # this should never be run because it should be found in premove
+  elif len(moves) == 1: # only one possible move
     return moves[0]
-  if len(moves) == 2:
+  elif len(moves) == 2:
     # choose from best two moves with 20% chance of the worse move
-    best = minimax(game, depth)
+    best = A.minimax(game)
     rand = random.random()
-    if random <= .8:
+    if rand <= .8:
       return best
     else:
       other = moves[0] if moves[1] == best else moves[1]
       return other
   # in this case we store the possible moves in a priority queue (implemented as a heap) Note there is no real optimiisation to this strategy if there are less than 3 moves
   else:
-    pq = PriorityQueue()
+    #pq = PriorityQueue()
+    sortlist = []
     for move in moves:
-      moveset = game.valid_moves('W')#[0]
       new = game.copy()
+      moveset = new.valid_moves('W')
       new.make_move(move[0],move[1], moveset)
       val = min_val(new, level)
       level = 1
-      pq.put(move,-val[0])
+      print val, move
+      #pq.put(move,-val[0])
+      sortlist.append([val[0],move])
     rand = random.random()
-    best = pq.get()
+    sortlist.sort()
+    print sortlist
+    #best = pq.get()
+    best = sortlist.pop()
     if rand > .8:
-      best = pq.get()
+      best = sortlist.pop()
       if rand > .95:
-        best = pq.get()
-    return best
+        best = sortlist.pop()
     print "Aww yeah I know which move is best I played: ", best
     return best[1]

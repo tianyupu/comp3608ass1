@@ -43,9 +43,14 @@ tournaments. This section outlines the version of the rules that was used to cre
  \item A player may not pass unless they have no more valid moves: in this case they automatically pass.
 \end{enumerate}
 
+\subsection{Playing the game}
+Our version of the game begins by asking the player whether they wish to verse a human or else which of the three AIs they wish to play. Input is tested to be one of the letters A, B, C or H. If invalid input is given the prompt is given again. They are then asked for their name (or both their names). As the name can be any value this is not tested (It is only included to make the input more personal).
+The player is then told which colour they are (the game is symetric so this doesn't limit the game choices). The game defaults to human playing first. The rest of the user input requires the user to type in their move of the form 'x y' eg. 1 2. This is tested to be a valid move. It is not tested to be correct syntax. This is assumed (as per assignment spec).
+In order to make the game more user friendly, at each stage your valid moves are printed out as a list, so you can chose a move. And all the moves played so far are also printed. When the AI moves you also see their valid moves and which move they choose. This makes games more recordable and user-friendly.
+
 \section{Implementation of Strategies}
 \subsection{Heuristic}
-The game of Othello is complex ~\cite{post}. We felt that each strategy didn't differ sufficiently to warrant a seperate evaluation function. Rather we felt that having a more informed evaluation function for each strategy was optimal. There are three main methods to judge a position in Othello as follows ~\cite{strategy}:
+The game of Othello is complex ~\cite{post}. We therefore designed two evaluation functions. Strategy A and B use a very simple intuitive evaluation strategy. The heuristic simply counts the number of their tokens on the board and aims to maximise it. However for strategy C we implemented a far more complicated heuristic function that takes much more game strategy into consideration. There are three main methods to judge a position in Othello as follows ~\cite{strategy}:
 \begin{enumerate}
 \item \emph{Number of tokens} Obviously as the aim of the game is to have the most tokens, this is a good basic estimate of who is winning at any one point in time.
 \item \emph{Stability} Certain pieces are a lot easier to `flank' than others. In particular corners are very stable and cannot be flipped. Pieces protruding from corners are also more stable.
@@ -90,8 +95,10 @@ Although this AI does not always select the optimal move, it is non-deterministi
 \section{Empirical Setup}
 
 \section{Findings}
-We ran THIS MANY GAMES and found that strategy BLAH performed best winning X percent as opposed to the Y percent or Z percent
+\subsection{expectation}
+We expected strategy A to perform the worst as it didn't search as deeply and didn't have a great heuristic. We also expected strategy B to have shortcomings due to the predictability as well as the more basic heuristic function used. Strategy C we expected would have very few losses. This is because of a number of factors. Firstly it is random, and thus cannot be predicted by a clever opponent. Secondly and most importantly it uses a much more accurate heuristic function.
 \subsection{Results}
+We ran THIS MANY GAMES and found that strategy BLAH performed best winning X percent as opposed to the Y percent or Z percent
 
 \subsection{Conclusion}
 
