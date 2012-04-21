@@ -64,7 +64,7 @@ Each of these methods has its own shortcomings and advantages. We chose to imple
 h(\mbox{black}) = \mbox{number black pieces}*f(\mbox{pieces}) + \mbox{factor}*\mbox{number available moves}
 \end{equation}
 where f() is a function of the stability of each piece. f() weights corner pieces and pieces joint to corner pieces higher than centre unprotected pieces. The factor is a constant which chooses the balance to be given between each of the strategy calculations.
-TALK ABOUT HOW BOTH HEURISTICS ARE ADMISSABLE
+Clearly both heuristics are admissable. As it is optimal to have stable pieces, more moves and more pieces on the board.
 
 \subsection{Strategy A}
 Strategy A uses the minimax algorithm. This has been implemented recursively. We have allowed the depth explored by the algorithm to vary depending on the level (1, 2 or 3) chosen by the user. The algorithm can be summarised thus:
@@ -119,14 +119,14 @@ With 10 runs per computer opponent, we noted these results:
 \section{Reflection}
 
 \subsection{Lisa's Reflection: 309201470}
-I really enjoyed this assignment and felt that I learnt a lot from it. It was very satisfying to implement a working game and strategies. I particularly liked the open-ended-ness which meant that we could get creative with the third strategy. The most valuable thing I felt I learnt from this assignment is the complexity of AI. This complexity arrises from user-input and makes it very difficult to create an ideal opponent. The human opponent will act very differently based on his/ her level of expertice and will often not chose the optimal strategy. Thus it makes the task of the AI much more complex in moving optimally. Further it made me consider the importance of chance. Choosing the most strategically sound option each time is very predictable and is not an optimal strategy. In addition I learnt a lot about the game of Othello and the many complicated strategies involved.
+I thoroughly this assignment and feel that I learnt a lot from it. It was very satisfying to implement a working game and strategies as it highlighted the application of our studies to real-world scenarios. I particularly liked the open-ended-ness which meant that we could get creative with the third strategy. The most valuable thing I felt I learnt from this assignment is the complexity of AI. This complexity arrises from user-input and makes it very difficult to create an ideal opponent. The human opponent will act very differently based on his/ her level of expertice and will often not chose the optimal strategy. Thus it makes the task of the AI much more complex in moving optimally. Further it made me consider the importance of chance. Choosing the most strategically sound option each time is very predictable and is not an optimal strategy. In addition I learnt a lot about the game of Othello and the many complicated strategies involved.
 
 \subsection{Tian's Reflection: 310182212}
 I feel that this has been one of the most interesting and educational code-writing tasks that I have done to-date.
 I found it challenging at times, but ultimately rewarding when everything came together. I think that the most
 important thing I learned from this assignment was the application of artificial intelligence to real-world, concrete
 examples (such as games). This assignment has allowed me to gain a deeper understanding of the course material
-covered in class, and has also taught me the value of perserverance. I also feel that writing this report, and 
+covered in class, and has also taught me the value of perserverance. I also feel that writing this report, and
 having to communicate our findings to an audience, was also a very important skill to practice.
 
 \section{Extensions}
